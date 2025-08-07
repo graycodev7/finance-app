@@ -1,103 +1,350 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState, useMemo, useCallback } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DashboardCharts } from "@/components/dashboard-charts"
+import { ReportsSection } from "@/components/reports-section"
+import { ArrowDownIcon, ArrowUpIcon, Wallet, AlertTriangle, Target } from "lucide-react"
+import { useTransactions } from "@/components/transaction-provider"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { TransactionItem } from "@/components/transaction-item"
+
+export default function Dashboard() {
+  const [selectedPeriod, setSelectedPeriod] = useState("all")
+  
+  // Optimizar el callback de cambio de período
+  const handlePeriodChange = useCallback((value: string) => {
+    setSelectedPeriod(value);
+  }, []);
+  const {
+    transactions,
+    getTransactionsByPeriod,
+    getTotalIncome,
+    getTotalExpenses,
+    getBalance,
+    getMonthlyData,
+    getTopExpenseCategories,
+  } = useTransactions()
+
+  // Memoizar cálculos costosos
+  const displayTransactions = useMemo(() => 
+    selectedPeriod === "all" ? transactions : getTransactionsByPeriod(selectedPeriod), 
+    [selectedPeriod, transactions, getTransactionsByPeriod]
+  )
+  
+  const totalIncome = useMemo(() => getTotalIncome(), [getTotalIncome])
+  const totalExpenses = useMemo(() => getTotalExpenses(), [getTotalExpenses])
+  const balance = useMemo(() => getBalance(), [getBalance])
+  const monthlyData = useMemo(() => getMonthlyData(), [getMonthlyData])
+  const topCategories = useMemo(() => getTopExpenseCategories(), [getTopExpenseCategories])
+
+  // Calcular métricas de análisis
+  const savingsRate = useMemo(() => 
+    totalIncome > 0 ? ((balance / totalIncome) * 100).toFixed(1) : "0", 
+    [totalIncome, balance]
+  )
+  const topExpenseCategory = useMemo(() => topCategories[0], [topCategories])
+  const recentTransactions = useMemo(() => transactions.slice(0, 5), [transactions])
+
+  // Análisis de patrones
+  const insights = useMemo(() => {
+    const insights: Array<{
+      type: string;
+      title: string;
+      description: string;
+    }> = []
+    
+    // Solo mostrar alertas si hay transacciones registradas
+    if (transactions.length === 0) {
+      return insights
+    }
+
+    // Alerta de tasa de ahorro baja (solo si hay ingresos)
+    if (totalIncome > 0 && Number(savingsRate) < 20) {
+      insights.push({
+        type: "warning",
+        title: "Tasa de ahorro baja",
+        description: `Tu tasa de ahorro es del ${savingsRate}%. Se recomienda ahorrar al menos el 20% de tus ingresos.`,
+      })
+    }
+
+    // Alerta de concentración de gastos (solo si hay gastos)
+    if (topExpenseCategory && topExpenseCategory.percentage > 40 && totalExpenses > 0) {
+      insights.push({
+        type: "alert",
+        title: "Concentración de gastos alta",
+        description: `El ${topExpenseCategory.percentage.toFixed(1)}% de tus gastos se concentra en ${topExpenseCategory.category}. Considera diversificar.`,
+      })
+    }
+
+    // Alerta de balance negativo (solo si hay transacciones)
+    if (balance < 0 && (totalIncome > 0 || totalExpenses > 0)) {
+      insights.push({
+        type: "error",
+        title: "Balance negativo",
+        description: "Tus gastos superan tus ingresos. Es importante revisar tu presupuesto.",
+      })
+    }
+
+    return insights
+  }, [transactions.length, totalIncome, totalExpenses, savingsRate, topExpenseCategory, balance])
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex-1 space-y-6 sm:space-y-8 main-content pt-20 md:pt-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen responsive-container">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0 w-full">
+        <div className="flex items-center space-x-2">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            Dashboard Financiero
+          </h2>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <div className="flex items-center space-x-2">
+          <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
+            <SelectTrigger className="w-full sm:w-[180px] border-0 bg-white/80 backdrop-blur-sm shadow-lg shadow-slate-200/50 rounded-2xl">
+              <SelectValue placeholder="Seleccionar período" />
+            </SelectTrigger>
+            <SelectContent className="border-0 shadow-2xl rounded-2xl bg-white/95 backdrop-blur-md">
+              <SelectItem value="all">Todos los datos</SelectItem>
+              <SelectItem value="thisWeek">Esta semana</SelectItem>
+              <SelectItem value="thisMonth">Este mes</SelectItem>
+              <SelectItem value="lastMonth">Mes pasado</SelectItem>
+              <SelectItem value="thisYear">Este año</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Alertas y análisis */}
+      {insights.length > 0 && (
+        <div className="space-y-4">
+          {insights.map((insight, index) => (
+            <Alert 
+              key={index} 
+              variant={insight.type === "error" ? "destructive" : "default"} 
+              className="border-0 bg-gradient-to-r from-amber-50 to-orange-50 shadow-lg shadow-orange-100/50 rounded-2xl backdrop-blur-sm"
+            >
+              <AlertTriangle className="h-5 w-5" />
+              <AlertTitle className="font-semibold text-lg">{insight.title}</AlertTitle>
+              <AlertDescription className="text-sm opacity-80">{insight.description}</AlertDescription>
+            </Alert>
+          ))}
+        </div>
+      )}
+
+      {/* Tarjetas de resumen - DISEÑO COMPLETAMENTE NUEVO */}
+      <div className="responsive-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        {/* Ingresos */}
+        <div 
+          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-emerald-100/50 hover:shadow-xl hover:shadow-emerald-200/50 transition-all duration-300 border-0"
+          style={{
+            background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+            backgroundColor: '#ecfdf5'
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-emerald-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-emerald-700">Ingresos Totales</p>
+              <div className="p-3 rounded-2xl bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors duration-300">
+                <ArrowUpIcon className="h-5 w-5 text-emerald-600" />
+              </div>
+            </div>
+            <div className="text-3xl md:text-4xl font-bold text-emerald-700 mb-2">
+              ${totalIncome.toLocaleString()}
+            </div>
+            <p className="text-xs text-emerald-600/70">Total acumulado</p>
+          </div>
+        </div>
+
+        {/* Gastos */}
+        <div 
+          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-rose-100/50 hover:shadow-xl hover:shadow-rose-200/50 transition-all duration-300 border-0"
+          style={{
+            background: 'linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%)',
+            backgroundColor: '#fff1f2'
+          }}
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <div className="absolute inset-0 bg-gradient-to-br from-rose-400/10 to-rose-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-rose-700">Gastos Totales</p>
+              <div className="p-3 rounded-2xl bg-rose-500/10 group-hover:bg-rose-500/20 transition-colors duration-300">
+                <ArrowDownIcon className="h-5 w-5 text-rose-600" />
+              </div>
+            </div>
+            <div className="text-3xl md:text-4xl font-bold text-rose-700 mb-2">
+              ${totalExpenses.toLocaleString()}
+            </div>
+            <p className="text-xs text-rose-600/70">Total acumulado</p>
+          </div>
+        </div>
+
+        {/* Balance */}
+        <div 
+          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-blue-100/50 hover:shadow-xl hover:shadow-blue-200/50 transition-all duration-300 border-0"
+          style={{
+            background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+            backgroundColor: '#eff6ff'
+          }}
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-blue-700">Balance</p>
+              <div className="p-3 rounded-2xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors duration-300">
+                <Wallet className="h-5 w-5 text-blue-600" />
+              </div>
+            </div>
+            <div className={`text-3xl md:text-4xl font-bold mb-2 ${balance >= 0 ? "text-blue-700" : "text-rose-700"}`}>
+              ${balance.toLocaleString()}
+            </div>
+            <p className="text-xs text-blue-600/70">Balance actual disponible</p>
+          </div>
+        </div>
+
+        {/* Tasa de Ahorro */}
+        <div 
+          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-amber-100/50 hover:shadow-xl hover:shadow-amber-200/50 transition-all duration-300 border-0"
+          style={{
+            background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+            backgroundColor: '#fffbeb'
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-400/10 to-amber-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-amber-700">Tasa de Ahorro</p>
+              <div className="p-3 rounded-2xl bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors duration-300">
+                <Target className="h-5 w-5 text-amber-600" />
+              </div>
+            </div>
+            <div className={`text-3xl md:text-4xl font-bold mb-2 ${Number(savingsRate) >= 20 ? "text-amber-700" : "text-amber-700"}`}>
+              {savingsRate}%
+            </div>
+            <p className="text-xs text-amber-600/70">{Number(savingsRate) >= 20 ? "¡Excelente!" : "Mejorable"}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Gráficos - Rediseñados */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm shadow-lg shadow-slate-200/50 rounded-2xl border-0 p-2">
+          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-slate-900 data-[state=active]:text-white">Gráficos</TabsTrigger>
+          <TabsTrigger value="analytics" className="rounded-xl data-[state=active]:bg-slate-900 data-[state=active]:text-white">Análisis</TabsTrigger>
+          <TabsTrigger value="reports" className="rounded-xl data-[state=active]:bg-slate-900 data-[state=active]:text-white">Reportes</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-slate-200/50 border-0 p-4 sm:p-6 lg:p-8 chart-container">
+            <DashboardCharts transactions={transactions} monthlyData={monthlyData} topCategories={topCategories} />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <div className="responsive-grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+            <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-slate-200/50 border-0 p-4 sm:p-6 lg:p-8">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Análisis de Patrones</h3>
+                <p className="text-sm text-slate-600">Insights sobre tus hábitos financieros</p>
+              </div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-slate-800">Mayor categoría de gasto:</h4>
+                  <p className="text-sm text-slate-600">
+                    {topExpenseCategory
+                      ? `${topExpenseCategory.category} representa el ${topExpenseCategory.percentage.toFixed(1)}% de tus gastos ($${topExpenseCategory.amount.toLocaleString()})`
+                      : "No hay datos suficientes"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-slate-800">Promedio mensual:</h4>
+                  <p className="text-sm text-slate-600">
+                    Ingresos: $
+                    {monthlyData.length > 0
+                      ? Math.round(
+                          monthlyData.reduce((sum, m) => sum + m.ingresos, 0) / monthlyData.length,
+                        ).toLocaleString()
+                      : "0"}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    Gastos: $
+                    {monthlyData.length > 0
+                      ? Math.round(
+                          monthlyData.reduce((sum, m) => sum + m.gastos, 0) / monthlyData.length,
+                        ).toLocaleString()
+                      : "0"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-slate-800">Recomendaciones:</h4>
+                  <ul className="text-sm text-slate-600 space-y-1">
+                    {Number(savingsRate) < 20 && <li>• Intenta aumentar tu tasa de ahorro al 20%</li>}
+                    {topExpenseCategory && topExpenseCategory.percentage > 30 && (
+                      <li>• Considera reducir gastos en {topExpenseCategory.category}</li>
+                    )}
+                    <li>• Revisa tus gastos mensuales regularmente</li>
+                    <li>• Establece metas de ahorro específicas</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-slate-200/50 border-0 p-4 sm:p-6 lg:p-8">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Distribución de Gastos</h3>
+                <p className="text-sm text-slate-600">Desglose detallado por categoría</p>
+              </div>
+              <div className="space-y-4">
+                {topCategories.slice(0, 6).map((category, index) => (
+                  <div key={category.category} className="flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-blue-500" />
+                      <span className="text-sm font-medium text-slate-800">{category.category}</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-bold text-slate-900">${category.amount.toLocaleString()}</div>
+                      <div className="text-xs text-slate-500">{category.percentage.toFixed(1)}%</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="reports" className="space-y-6">
+          <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-slate-200/50 border-0 p-4 sm:p-6 lg:p-8">
+            <ReportsSection />
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Transacciones recientes - Rediseñadas */}
+      <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-slate-200/50 border-0 p-4 sm:p-6 lg:p-8">
+        <div className="mb-6">
+          <h3 className="text-xl font-bold text-slate-900 mb-2">Transacciones Recientes</h3>
+          <p className="text-sm text-slate-600">Últimas 5 transacciones registradas</p>
+        </div>
+        <div className="space-y-4">
+          {recentTransactions.length > 0 ? (
+            recentTransactions.map((transaction) => (
+              <div key={transaction.id} className="p-4 bg-slate-50/80 rounded-2xl">
+                <TransactionItem
+                  transaction={transaction}
+                  showDeleteButton={false}
+                />
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-slate-500 py-12 text-lg">
+              No hay transacciones registradas. ¡Agrega tu primera transacción!
+            </p>
+          )}
+        </div>
+      </div>
     </div>
-  );
+  )
 }

@@ -1,26 +1,776 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* CONFIGURACIÓN CORRECTA PARA TAILWIND V4 + NEXT-THEMES */
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: 248 250 252;
+  --color-foreground: 15 23 42;
+  --color-card: 255 255 255;
+  --color-card-foreground: 15 23 42;
+  --color-popover: 255 255 255;
+  --color-popover-foreground: 15 23 42;
+  --color-primary: 99 102 241;
+  --color-primary-foreground: 255 255 255;
+  --color-secondary: 241 245 249;
+  --color-secondary-foreground: 15 23 42;
+  --color-muted: 248 250 252;
+  --color-muted-foreground: 100 116 139;
+  --color-accent: 241 245 249;
+  --color-accent-foreground: 15 23 42;
+  --color-destructive: 239 68 68;
+  --color-destructive-foreground: 255 255 255;
+  --color-border: 241 245 249;
+  --color-input: 248 250 252;
+  --color-ring: 99 102 241;
+  --color-chart-1: 59 130 246;
+  --color-chart-2: 16 185 129;
+  --color-chart-3: 245 158 11;
+  --color-chart-4: 139 92 246;
+  --color-chart-5: 236 72 153;
+  --radius: 1rem;
+  --color-sidebar-background: 255 255 255;
+  --color-sidebar-foreground: 15 23 42;
+  --color-sidebar-primary: 99 102 241;
+  --color-sidebar-primary-foreground: 255 255 255;
+  --color-sidebar-accent: 241 245 249;
+  --color-sidebar-accent-foreground: 15 23 42;
+  --color-sidebar-border: 241 245 249;
+  --color-sidebar-ring: 99 102 241;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme dark {
+  --color-background: 2 6 23;
+  --color-foreground: 248 250 252;
+  --color-card: 15 23 42;
+  --color-card-foreground: 248 250 252;
+  --color-popover: 15 23 42;
+  --color-popover-foreground: 248 250 252;
+  --color-primary: 129 140 248;
+  --color-primary-foreground: 15 23 42;
+  --color-secondary: 30 41 59;
+  --color-secondary-foreground: 248 250 252;
+  --color-muted: 30 41 59;
+  --color-muted-foreground: 148 163 184;
+  --color-accent: 30 41 59;
+  --color-accent-foreground: 248 250 252;
+  --color-destructive: 248 113 113;
+  --color-destructive-foreground: 15 23 42;
+  --color-border: 30 41 59;
+  --color-input: 30 41 59;
+  --color-ring: 129 140 248;
+  --color-chart-1: 96 165 250;
+  --color-chart-2: 52 211 153;
+  --color-chart-3: 251 191 36;
+  --color-chart-4: 167 139 250;
+  --color-chart-5: 244 114 182;
+  --color-sidebar-background: 15 23 42;
+  --color-sidebar-foreground: 248 250 252;
+  --color-sidebar-primary: 129 140 248;
+  --color-sidebar-primary-foreground: 15 23 42;
+  --color-sidebar-accent: 30 41 59;
+  --color-sidebar-accent-foreground: 248 250 252;
+  --color-sidebar-border: 30 41 59;
+  --color-sidebar-ring: 129 140 248;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Tema oscuro equilibrado - Respeta el diseño original */
+@layer utilities {
+  /* Variables CSS para tema oscuro personalizado */
+  [data-custom-appearance="true"] {
+    --color-background: 15 23 42 !important; /* slate-900 */
+    --color-foreground: 248 250 252 !important; /* slate-50 */
+    --color-card: 30 41 59 !important; /* slate-800 */
+    --color-card-foreground: 248 250 252 !important;
+    --color-popover: 30 41 59 !important;
+    --color-popover-foreground: 248 250 252 !important;
+    --color-primary: 99 102 241 !important;
+    --color-primary-foreground: 255 255 255 !important;
+    --color-secondary: 51 65 85 !important; /* slate-700 */
+    --color-secondary-foreground: 241 245 249 !important;
+    --color-muted: 51 65 85 !important;
+    --color-muted-foreground: 148 163 184 !important;
+    --color-accent: 71 85 105 !important; /* slate-600 */
+    --color-accent-foreground: 248 250 252 !important;
+    --color-border: 71 85 105 !important;
+    --color-input: 51 65 85 !important;
+    --color-ring: 99 102 241 !important;
+  }
+  
+  /* Fondo principal de la aplicación - MÁS AGRESIVO */
+  [data-custom-appearance="true"],
+  [data-custom-appearance="true"] body,
+  [data-custom-appearance="true"] html {
+    background-color: rgb(15 23 42) !important;
+    color: rgb(248 250 252) !important;
+  }
+  
+  /* Aplicar fondo oscuro solo a elementos específicos */
+  [data-custom-appearance="true"] .main-content {
+    background: linear-gradient(to bottom right, rgb(15 23 42), rgb(30 41 59), rgb(15 23 42)) !important;
+  }
+  
+  /* Elementos que específicamente necesitan fondo de tarjeta */
+  [data-custom-appearance="true"] .responsive-card,
+  [data-custom-appearance="true"] .glass-card {
+    background-color: rgb(30 41 59) !important;
+    color: rgb(248 250 252) !important;
+  }
+  
+  /* FORZAR cards del dashboard - ENFOQUE DIRECTO Y AGRESIVO */
+  [data-custom-appearance="true"] [class*="from-emerald-50"][class*="to-emerald-100"] {
+    background: linear-gradient(to bottom right, rgb(236 253 245), rgb(209 250 229)) !important;
+    background-color: rgb(236 253 245) !important;
+    background-image: linear-gradient(to bottom right, rgb(236 253 245), rgb(209 250 229)) !important;
+  }
+  [data-custom-appearance="true"] [class*="from-rose-50"][class*="to-rose-100"] {
+    background: linear-gradient(to bottom right, rgb(255 241 242), rgb(254 205 211)) !important;
+    background-color: rgb(255 241 242) !important;
+    background-image: linear-gradient(to bottom right, rgb(255 241 242), rgb(254 205 211)) !important;
+  }
+  [data-custom-appearance="true"] [class*="from-blue-50"][class*="to-blue-100"] {
+    background: linear-gradient(to bottom right, rgb(239 246 255), rgb(219 234 254)) !important;
+    background-color: rgb(239 246 255) !important;
+    background-image: linear-gradient(to bottom right, rgb(239 246 255), rgb(219 234 254)) !important;
+  }
+  [data-custom-appearance="true"] [class*="from-amber-50"][class*="to-amber-100"] {
+    background: linear-gradient(to bottom right, rgb(255 251 235), rgb(254 243 199)) !important;
+    background-color: rgb(255 251 235) !important;
+    background-image: linear-gradient(to bottom right, rgb(255 251 235), rgb(254 243 199)) !important;
+  }
+  
+  /* SOBRESCRIBIR cualquier regla de fondo oscuro para estas cards */
+  [data-custom-appearance="true"] .responsive-card[class*="from-emerald"],
+  [data-custom-appearance="true"] .glass-card[class*="from-emerald"],
+  [data-custom-appearance="true"] div[class*="from-emerald-50"] {
+    background: linear-gradient(to bottom right, rgb(236 253 245), rgb(209 250 229)) !important;
+  }
+  [data-custom-appearance="true"] .responsive-card[class*="from-rose"],
+  [data-custom-appearance="true"] .glass-card[class*="from-rose"],
+  [data-custom-appearance="true"] div[class*="from-rose-50"] {
+    background: linear-gradient(to bottom right, rgb(255 241 242), rgb(254 205 211)) !important;
+  }
+  [data-custom-appearance="true"] .responsive-card[class*="from-blue"],
+  [data-custom-appearance="true"] .glass-card[class*="from-blue"],
+  [data-custom-appearance="true"] div[class*="from-blue-50"] {
+    background: linear-gradient(to bottom right, rgb(239 246 255), rgb(219 234 254)) !important;
+  }
+  [data-custom-appearance="true"] .responsive-card[class*="from-amber"],
+  [data-custom-appearance="true"] .glass-card[class*="from-amber"],
+  [data-custom-appearance="true"] div[class*="from-amber-50"] {
+    background: linear-gradient(to bottom right, rgb(255 251 235), rgb(254 243 199)) !important;
+  }
+  
+  /* FORZAR todos los elementos internos a colores del tema claro - ENFOQUE AGRESIVO */
+  [data-custom-appearance="true"] [class*="from-emerald-50"] *,
+  [data-custom-appearance="true"] [class*="from-emerald-50"] p,
+  [data-custom-appearance="true"] [class*="from-emerald-50"] div,
+  [data-custom-appearance="true"] [class*="from-emerald-50"] h1,
+  [data-custom-appearance="true"] [class*="from-emerald-50"] h2,
+  [data-custom-appearance="true"] [class*="from-emerald-50"] h3,
+  [data-custom-appearance="true"] [class*="from-emerald-50"] span {
+    color: rgb(5 46 22) !important; /* text-emerald-900 - más oscuro */
+  }
+  [data-custom-appearance="true"] [class*="from-rose-50"] *,
+  [data-custom-appearance="true"] [class*="from-rose-50"] p,
+  [data-custom-appearance="true"] [class*="from-rose-50"] div,
+  [data-custom-appearance="true"] [class*="from-rose-50"] h1,
+  [data-custom-appearance="true"] [class*="from-rose-50"] h2,
+  [data-custom-appearance="true"] [class*="from-rose-50"] h3,
+  [data-custom-appearance="true"] [class*="from-rose-50"] span {
+    color: rgb(76 5 25) !important; /* text-rose-900 - más oscuro */
+  }
+  [data-custom-appearance="true"] [class*="from-blue-50"] *,
+  [data-custom-appearance="true"] [class*="from-blue-50"] p,
+  [data-custom-appearance="true"] [class*="from-blue-50"] div,
+  [data-custom-appearance="true"] [class*="from-blue-50"] h1,
+  [data-custom-appearance="true"] [class*="from-blue-50"] h2,
+  [data-custom-appearance="true"] [class*="from-blue-50"] h3,
+  [data-custom-appearance="true"] [class*="from-blue-50"] span {
+    color: rgb(30 58 138) !important; /* text-blue-800 - más oscuro */
+  }
+  [data-custom-appearance="true"] [class*="from-amber-50"] *,
+  [data-custom-appearance="true"] [class*="from-amber-50"] p,
+  [data-custom-appearance="true"] [class*="from-amber-50"] div,
+  [data-custom-appearance="true"] [class*="from-amber-50"] h1,
+  [data-custom-appearance="true"] [class*="from-amber-50"] h2,
+  [data-custom-appearance="true"] [class*="from-amber-50"] h3,
+  [data-custom-appearance="true"] [class*="from-amber-50"] span {
+    color: rgb(146 64 14) !important; /* text-amber-800 - más oscuro */
+  }
+  
+  /* Eliminar TODOS los fondos blancos - exhaustivo */
+  [data-custom-appearance="true"] .bg-white,
+  [data-custom-appearance="true"] .bg-slate-50,
+  [data-custom-appearance="true"] .bg-slate-100,
+  [data-custom-appearance="true"] .bg-gray-50,
+  [data-custom-appearance="true"] .bg-gray-100,
+  [data-custom-appearance="true"] .bg-neutral-50,
+  [data-custom-appearance="true"] .bg-stone-50,
+  [data-custom-appearance="true"] .responsive-card,
+  [data-custom-appearance="true"] .glass-card,
+  [data-custom-appearance="true"] [style*="background-color: white"],
+  [data-custom-appearance="true"] [style*="background-color: #fff"],
+  [data-custom-appearance="true"] [style*="background-color: #ffffff"],
+  [data-custom-appearance="true"] [style*="background: white"],
+  [data-custom-appearance="true"] [style*="background: #fff"],
+  [data-custom-appearance="true"] [style*="background: #ffffff"] {
+    background-color: rgb(30 41 59) !important; /* slate-800 */
+    color: rgb(248 250 252) !important;
+    border-color: rgb(71 85 105) !important;
+  }
+  
+  /* Elementos con transparencia y backdrop */
+  [data-custom-appearance="true"] .bg-slate-50\/80,
+  [data-custom-appearance="true"] .bg-white\/80,
+  [data-custom-appearance="true"] .bg-slate-50\/90,
+  [data-custom-appearance="true"] .bg-white\/90,
+  [data-custom-appearance="true"] .backdrop-blur-sm,
+  [data-custom-appearance="true"] .backdrop-blur,
+  [data-custom-appearance="true"] .backdrop-blur-md {
+    background-color: rgb(30 41 59 / 0.8) !important;
+    color: rgb(248 250 252) !important;
+  }
+  
+  /* Forzar fondo oscuro en elementos específicos comunes */
+  [data-custom-appearance="true"] div[class*="bg-white"],
+  [data-custom-appearance="true"] section[class*="bg-white"],
+  [data-custom-appearance="true"] article[class*="bg-white"],
+  [data-custom-appearance="true"] main[class*="bg-white"],
+  [data-custom-appearance="true"] header[class*="bg-white"],
+  [data-custom-appearance="true"] footer[class*="bg-white"] {
+    background-color: rgb(30 41 59) !important;
+    color: rgb(248 250 252) !important;
+  }
+  
+  /* Texto - solo cambiar colores oscuros */
+  [data-custom-appearance="true"] .text-slate-900,
+  [data-custom-appearance="true"] .text-slate-800,
+  [data-custom-appearance="true"] .text-slate-700,
+  [data-custom-appearance="true"] .text-gray-900 {
+    color: rgb(248 250 252) !important;
+  }
+  
+  [data-custom-appearance="true"] .text-slate-600,
+  [data-custom-appearance="true"] .text-slate-500 {
+    color: rgb(148 163 184) !important; /* slate-400 */
+  }
+  
+  /* Inputs y formularios */
+  [data-custom-appearance="true"] input,
+  [data-custom-appearance="true"] select,
+  [data-custom-appearance="true"] textarea {
+    background-color: rgb(51 65 85) !important;
+    color: rgb(248 250 252) !important;
+    border-color: rgb(71 85 105) !important;
+  }
+  
+  /* Bordes */
+  [data-custom-appearance="true"] .border-slate-200,
+  [data-custom-appearance="true"] .border-slate-300 {
+    border-color: rgb(71 85 105) !important;
+  }
+  
+  /* Separadores y líneas */
+  [data-custom-appearance="true"] .bg-slate-200\/50,
+  [data-custom-appearance="true"] .bg-gray-200,
+  [data-custom-appearance="true"] .bg-gray-100,
+  [data-custom-appearance="true"] hr {
+    background-color: rgb(71 85 105 / 0.5) !important;
+  }
+  
+  /* SOLUCIÓN NUCLEAR - Eliminar cualquier fondo blanco */
+  [data-custom-appearance="true"] *:not(.bg-transparent):not([class*="gradient"]) {
+    background-color: rgb(15 23 42) !important;
+  }
+  
+  /* Excepciones para elementos que necesitan fondos específicos */
+  [data-custom-appearance="true"] .responsive-card *,
+  [data-custom-appearance="true"] .glass-card *,
+  [data-custom-appearance="true"] [class*="card"] * {
+    background-color: rgb(30 41 59) !important;
+  }
+  
+  /* Botones y elementos interactivos mantienen sus colores */
+  [data-custom-appearance="true"] button,
+  [data-custom-appearance="true"] .btn {
+    background-color: rgb(51 65 85) !important;
+  }
+  
+  /* ===== DEBUG: HIGHLIGHT WHITE BACKGROUNDS ===== */
+  [data-custom-appearance="true"] *[style*="background-color: white"],
+  [data-custom-appearance="true"] *[style*="background-color: #fff"],
+  [data-custom-appearance="true"] *[style*="background-color: #ffffff"],
+  [data-custom-appearance="true"] *[style*="background: white"],
+  [data-custom-appearance="true"] *[style*="background: #fff"],
+  [data-custom-appearance="true"] *[style*="background: #ffffff"] {
+    outline: 3px solid red !important;
+    outline-offset: -3px !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Prevenir scroll horizontal global */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  /* Asegurar que todos los elementos respeten el ancho del contenedor */
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  /* Sombras más suaves en lugar de bordes duros */
+  .shadow-soft {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+  
+  .shadow-soft-lg {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  /* Bordes más suaves */
+  .border-soft {
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+}
+
+@layer utilities {
+  /* Utilidad para glassmorphism sutil */
+  .glass-subtle {
+    @apply bg-white/95 backdrop-blur-sm;
+  }
+}
+
+/* Estilos para apariencia personalizada usando data attributes */
+[data-custom-appearance="true"] {
+  background-color: #1a1a2e !important;
+  color: #eee !important;
+}
+
+/* Aplicar a todos los elementos principales */
+[data-custom-appearance="true"] *:not(svg):not(path):not(.lucide) {
+  background-color: #1a1a2e !important;
+  color: #eee !important;
+}
+
+/* Contenedores y elementos estructurales */
+[data-custom-appearance="true"] main,
+[data-custom-appearance="true"] div,
+[data-custom-appearance="true"] section,
+[data-custom-appearance="true"] article,
+[data-custom-appearance="true"] aside,
+[data-custom-appearance="true"] nav,
+[data-custom-appearance="true"] header,
+[data-custom-appearance="true"] footer {
+  background-color: #1a1a2e !important;
+  color: #eee !important;
+}
+
+/* Clases específicas de fondo */
+[data-custom-appearance="true"] .bg-white,
+[data-custom-appearance="true"] .bg-slate-50,
+[data-custom-appearance="true"] .bg-slate-100,
+[data-custom-appearance="true"] .bg-background,
+[data-custom-appearance="true"] .bg-card,
+[data-custom-appearance="true"] .bg-muted,
+[data-custom-appearance="true"] .glass-card,
+[data-custom-appearance="true"] .responsive-card {
+  background-color: #1a1a2e !important;
+}
+
+/* Elementos de texto */
+[data-custom-appearance="true"] .text-slate-900,
+[data-custom-appearance="true"] .text-slate-800,
+[data-custom-appearance="true"] .text-slate-700,
+[data-custom-appearance="true"] .text-foreground,
+[data-custom-appearance="true"] h1,
+[data-custom-appearance="true"] h2,
+[data-custom-appearance="true"] h3,
+[data-custom-appearance="true"] h4,
+[data-custom-appearance="true"] h5,
+[data-custom-appearance="true"] h6,
+[data-custom-appearance="true"] p,
+[data-custom-appearance="true"] span,
+[data-custom-appearance="true"] label {
+  color: #eee !important;
+}
+
+/* Texto secundario */
+[data-custom-appearance="true"] .text-slate-600,
+[data-custom-appearance="true"] .text-slate-500,
+[data-custom-appearance="true"] .text-muted-foreground {
+  color: #ccc !important;
+  opacity: 0.9;
+}
+
+/* Tarjetas y contenedores especiales */
+[data-custom-appearance="true"] .card,
+[data-custom-appearance="true"] [data-radix-popper-content-wrapper],
+[data-custom-appearance="true"] [role="dialog"],
+[data-custom-appearance="true"] .popover,
+[data-custom-appearance="true"] [data-radix-tabs-content] {
+  background-color: #1a1a2e !important;
+  color: #eee !important;
+}
+
+/* Inputs, selects y botones */
+[data-custom-appearance="true"] input,
+[data-custom-appearance="true"] textarea,
+[data-custom-appearance="true"] select {
+  background-color: #2a2a4e !important;
+  color: #eee !important;
+  border-color: #555 !important;
+}
+
+/* Botones (excepto los que tienen gradientes) */
+[data-custom-appearance="true"] button:not([class*="bg-gradient"]) {
+  background-color: #2a2a4e !important;
+  color: #eee !important;
+  border-color: #555 !important;
+}
+
+/* Preservar iconos */
+[data-custom-appearance="true"] svg,
+[data-custom-appearance="true"] .lucide {
+  color: inherit !important;
+}
+
+/* Glassmorphism personalizado */
+[data-custom-appearance="true"] .glass-card {
+  background: rgba(26, 26, 46, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(238, 238, 238, 0.1) !important;
+}
+
+@layer components {
+  /* Estilos para el sidebar móvil */
+  .modern-sidebar {
+    @apply bg-white border-r border-slate-200/50 shadow-xl;
+  }
+  
+  /* Tema oscuro para el sidebar */
+  .dark .modern-sidebar {
+    @apply bg-slate-900 border-slate-700/50;
+  }
+  
+  /* Estilos para botones modernos */
+  .modern-button {
+    @apply rounded-xl shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  /* Estilos para navegación */
+  .modern-nav-item {
+    @apply rounded-xl hover:bg-slate-50 transition-colors duration-200;
+  }
+  
+  .modern-nav-active {
+    @apply bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500;
+  }
+  
+  /* Tema oscuro para navegación */
+  .dark .modern-nav-item {
+    @apply hover:bg-slate-800;
+  }
+  
+  .dark .modern-nav-active {
+    @apply bg-indigo-900/50 text-indigo-300;
+  }
+  
+  /* Texto con gradiente */
+  .gradient-text {
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent;
+  }
+  
+  /* Estilos para prevenir overflow horizontal en componentes específicos */
+  .responsive-container {
+    @apply w-full max-w-full overflow-hidden;
+  }
+  
+  /* Gráficos responsivos */
+  .chart-container {
+    @apply w-full overflow-hidden;
+  }
+  
+  .chart-container > * {
+    @apply max-w-full;
+  }
+  
+  /* Tablas responsivas */
+  .responsive-table {
+    @apply w-full overflow-x-auto;
+  }
+  
+  .responsive-table table {
+    @apply min-w-full;
+  }
+  
+  /* Cards responsivas */
+  .responsive-card {
+    @apply w-full max-w-full overflow-hidden;
+  }
+  
+  /* Grids responsivos */
+  .responsive-grid {
+    @apply grid gap-4 w-full;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  /* Texto que puede ser muy largo */
+  .text-ellipsis-responsive {
+    @apply truncate max-w-full;
+  }
+  
+  /* Contenedor principal responsivo */
+  .main-content {
+    @apply w-full max-w-full overflow-hidden px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Ajustes específicos para móvil */
+  @media (max-width: 640px) {
+    .mobile-stack {
+      @apply flex-col space-y-4 space-x-0;
+    }
+    
+    .mobile-full-width {
+      @apply w-full;
+    }
+    
+    .mobile-text-sm {
+      @apply text-sm;
+    }
+    
+    .mobile-p-4 {
+      @apply p-4;
+    }
+  }
+}
+
+/* ========================================= */
+/* FORZAR CARDS DEL DASHBOARD - ENFOQUE DIRECTO CON CLASES EXACTAS */
+/* ========================================= */
+
+/* Selectores exactos que coinciden con las clases reales de las cards */
+[data-custom-appearance="true"] .bg-gradient-to-br.from-emerald-50.to-emerald-100 {
+  background: linear-gradient(135deg, rgb(236 253 245) 0%, rgb(209 250 229) 100%) !important;
+  background-color: rgb(236 253 245) !important;
+}
+
+[data-custom-appearance="true"] .bg-gradient-to-br.from-rose-50.to-rose-100 {
+  background: linear-gradient(135deg, rgb(255 241 242) 0%, rgb(254 205 211) 100%) !important;
+  background-color: rgb(255 241 242) !important;
+}
+
+[data-custom-appearance="true"] .bg-gradient-to-br.from-blue-50.to-blue-100 {
+  background: linear-gradient(135deg, rgb(239 246 255) 0%, rgb(219 234 254) 100%) !important;
+  background-color: rgb(239 246 255) !important;
+}
+
+[data-custom-appearance="true"] .bg-gradient-to-br.from-amber-50.to-amber-100 {
+  background: linear-gradient(135deg, rgb(255 251 235) 0%, rgb(254 243 199) 100%) !important;
+  background-color: rgb(255 251 235) !important;
+}
+
+/* Selectores con mayor especificidad para sobrescribir .responsive-card */
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-emerald-50.to-emerald-100 {
+  background: linear-gradient(135deg, rgb(236 253 245) 0%, rgb(209 250 229) 100%) !important;
+  background-color: rgb(236 253 245) !important;
+}
+
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-rose-50.to-rose-100 {
+  background: linear-gradient(135deg, rgb(255 241 242) 0%, rgb(254 205 211) 100%) !important;
+  background-color: rgb(255 241 242) !important;
+}
+
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-blue-50.to-blue-100 {
+  background: linear-gradient(135deg, rgb(239 246 255) 0%, rgb(219 234 254) 100%) !important;
+  background-color: rgb(239 246 255) !important;
+}
+
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-amber-50.to-amber-100 {
+  background: linear-gradient(135deg, rgb(255 251 235) 0%, rgb(254 243 199) 100%) !important;
+  background-color: rgb(255 251 235) !important;
+}
+
+/* Forzar colores de texto oscuros para legibilidad */
+[data-custom-appearance="true"] .bg-gradient-to-br.from-emerald-50.to-emerald-100 *,
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-emerald-50.to-emerald-100 * {
+  color: rgb(5 46 22) !important; /* text-emerald-900 */
+}
+
+[data-custom-appearance="true"] .bg-gradient-to-br.from-rose-50.to-rose-100 *,
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-rose-50.to-rose-100 * {
+  color: rgb(76 5 25) !important; /* text-rose-900 */
+}
+
+[data-custom-appearance="true"] .bg-gradient-to-br.from-blue-50.to-blue-100 *,
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-blue-50.to-blue-100 * {
+  color: rgb(30 58 138) !important; /* text-blue-800 */
+}
+
+[data-custom-appearance="true"] .bg-gradient-to-br.from-amber-50.to-amber-100 *,
+[data-custom-appearance="true"] div.group.relative.overflow-hidden.bg-gradient-to-br.from-amber-50.to-amber-100 * {
+  color: rgb(146 64 14) !important; /* text-amber-800 */
+}
+
+/* ========================================= */
+/* REGLAS UNIVERSALES - SIN DEPENDENCIA DE ATRIBUTO */
+/* ========================================= */
+
+/* Estas reglas funcionan independientemente del tema para FORZAR las cards */
+html[data-theme="dark"] .bg-gradient-to-br.from-emerald-50.to-emerald-100,
+.dark .bg-gradient-to-br.from-emerald-50.to-emerald-100,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-emerald-50.to-emerald-100 {
+  background: linear-gradient(135deg, rgb(236 253 245) 0%, rgb(209 250 229) 100%) !important;
+  background-color: rgb(236 253 245) !important;
+}
+
+html[data-theme="dark"] .bg-gradient-to-br.from-rose-50.to-rose-100,
+.dark .bg-gradient-to-br.from-rose-50.to-rose-100,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-rose-50.to-rose-100 {
+  background: linear-gradient(135deg, rgb(255 241 242) 0%, rgb(254 205 211) 100%) !important;
+  background-color: rgb(255 241 242) !important;
+}
+
+html[data-theme="dark"] .bg-gradient-to-br.from-blue-50.to-blue-100,
+.dark .bg-gradient-to-br.from-blue-50.to-blue-100,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-blue-50.to-blue-100 {
+  background: linear-gradient(135deg, rgb(239 246 255) 0%, rgb(219 234 254) 100%) !important;
+  background-color: rgb(239 246 255) !important;
+}
+
+html[data-theme="dark"] .bg-gradient-to-br.from-amber-50.to-amber-100,
+.dark .bg-gradient-to-br.from-amber-50.to-amber-100,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-amber-50.to-amber-100 {
+  background: linear-gradient(135deg, rgb(255 251 235) 0%, rgb(254 243 199) 100%) !important;
+  background-color: rgb(255 251 235) !important;
+}
+
+/* Colores de texto universales */
+html[data-theme="dark"] .bg-gradient-to-br.from-emerald-50.to-emerald-100 *,
+.dark .bg-gradient-to-br.from-emerald-50.to-emerald-100 *,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-emerald-50.to-emerald-100 * {
+  color: rgb(5 46 22) !important;
+}
+
+html[data-theme="dark"] .bg-gradient-to-br.from-rose-50.to-rose-100 *,
+.dark .bg-gradient-to-br.from-rose-50.to-rose-100 *,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-rose-50.to-rose-100 * {
+  color: rgb(76 5 25) !important;
+}
+
+html[data-theme="dark"] .bg-gradient-to-br.from-blue-50.to-blue-100 *,
+.dark .bg-gradient-to-br.from-blue-50.to-blue-100 *,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-blue-50.to-blue-100 * {
+  color: rgb(30 58 138) !important;
+}
+
+html[data-theme="dark"] .bg-gradient-to-br.from-amber-50.to-amber-100 *,
+.dark .bg-gradient-to-br.from-amber-50.to-amber-100 *,
+[data-custom-appearance="true"] .bg-gradient-to-br.from-amber-50.to-amber-100 * {
+  color: rgb(146 64 14) !important;
+}
+
+/* ========================================= */
+/* ENFOQUE NUCLEAR - MÁXIMA AGRESIVIDAD */
+/* ========================================= */
+
+/* FORZAR CARDS - TODOS LOS SELECTORES POSIBLES */
+* .bg-gradient-to-br.from-emerald-50.to-emerald-100,
+html * .bg-gradient-to-br.from-emerald-50.to-emerald-100,
+body * .bg-gradient-to-br.from-emerald-50.to-emerald-100,
+div.bg-gradient-to-br.from-emerald-50.to-emerald-100,
+.group.bg-gradient-to-br.from-emerald-50.to-emerald-100 {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  background-color: #ecfdf5 !important;
+  background-image: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+}
+
+* .bg-gradient-to-br.from-rose-50.to-rose-100,
+html * .bg-gradient-to-br.from-rose-50.to-rose-100,
+body * .bg-gradient-to-br.from-rose-50.to-rose-100,
+div.bg-gradient-to-br.from-rose-50.to-rose-100,
+.group.bg-gradient-to-br.from-rose-50.to-rose-100 {
+  background: linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%) !important;
+  background-color: #fff1f2 !important;
+  background-image: linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%) !important;
+}
+
+* .bg-gradient-to-br.from-blue-50.to-blue-100,
+html * .bg-gradient-to-br.from-blue-50.to-blue-100,
+body * .bg-gradient-to-br.from-blue-50.to-blue-100,
+div.bg-gradient-to-br.from-blue-50.to-blue-100,
+.group.bg-gradient-to-br.from-blue-50.to-blue-100 {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+  background-color: #eff6ff !important;
+  background-image: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+}
+
+* .bg-gradient-to-br.from-amber-50.to-amber-100,
+html * .bg-gradient-to-br.from-amber-50.to-amber-100,
+body * .bg-gradient-to-br.from-amber-50.to-amber-100,
+div.bg-gradient-to-br.from-amber-50.to-amber-100,
+.group.bg-gradient-to-br.from-amber-50.to-amber-100 {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  background-color: #fffbeb !important;
+  background-image: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+}
+
+/* FORZAR COLORES DE TEXTO - NUCLEAR */
+* .bg-gradient-to-br.from-emerald-50.to-emerald-100 *,
+* .bg-gradient-to-br.from-emerald-50.to-emerald-100 p,
+* .bg-gradient-to-br.from-emerald-50.to-emerald-100 div,
+* .bg-gradient-to-br.from-emerald-50.to-emerald-100 span {
+  color: #052e16 !important;
+}
+
+* .bg-gradient-to-br.from-rose-50.to-rose-100 *,
+* .bg-gradient-to-br.from-rose-50.to-rose-100 p,
+* .bg-gradient-to-br.from-rose-50.to-rose-100 div,
+* .bg-gradient-to-br.from-rose-50.to-rose-100 span {
+  color: #4c0519 !important;
+}
+
+* .bg-gradient-to-br.from-blue-50.to-blue-100 *,
+* .bg-gradient-to-br.from-blue-50.to-blue-100 p,
+* .bg-gradient-to-br.from-blue-50.to-blue-100 div,
+* .bg-gradient-to-br.from-blue-50.to-blue-100 span {
+  color: #1e3a8a !important;
+}
+
+* .bg-gradient-to-br.from-amber-50.to-amber-100 *,
+* .bg-gradient-to-br.from-amber-50.to-amber-100 p,
+* .bg-gradient-to-br.from-amber-50.to-amber-100 div,
+* .bg-gradient-to-br.from-amber-50.to-amber-100 span {
+  color: #92400e !important;
+}
+
+/* ========================================= */
+/* SINTAXIS CORRECTA TAILWIND V4 - @layer theme */
+/* ========================================= */
+
+@layer theme {
+  .dark {
+    /* FORZAR COLORES DE CARDS DEL DASHBOARD - MANTENER TEMA CLARO */
+    --color-emerald-50: 236 253 245; /* #ecfdf5 */
+    --color-emerald-100: 209 250 229; /* #d1fae5 */
+    --color-rose-50: 255 241 242; /* #fff1f2 */
+    --color-rose-100: 254 205 211; /* #fecdd3 */
+    --color-blue-50: 239 246 255; /* #eff6ff */
+    --color-blue-100: 219 234 254; /* #dbeafe */
+    --color-amber-50: 255 251 235; /* #fffbeb */
+    --color-amber-100: 254 243 199; /* #fef3c7 */
+  }
 }
