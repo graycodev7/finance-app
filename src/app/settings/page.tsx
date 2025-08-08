@@ -14,6 +14,7 @@ import { Bell, Download, Globe, Lock, Palette, Settings, Trash2, Upload, User } 
 // import { useTheme } from "next-themes" // Ya no se usa
 import { useTransactions } from "@/components/transaction-provider"
 import { useCSVExport } from "@/hooks/use-csv-export"
+import { useCurrency, CURRENCIES } from "@/components/currency-provider"
 // import { useAppearance } from "@/components/appearance-provider" // Reemplazado por useTheme
 
 export default function SettingsPage() {
@@ -21,6 +22,7 @@ export default function SettingsPage() {
   // const { theme, setTheme } = useTheme() // Ya no se usa
   const { transactions } = useTransactions()
   const { exportToCSV } = useCSVExport()
+  const { currency, setCurrency } = useCurrency()
   // const { customAppearance, setCustomAppearance } = useAppearance() // Reemplazado por useTheme
   // Ahora usamos directamente theme de next-themes
 
@@ -40,9 +42,7 @@ export default function SettingsPage() {
     // Apariencia
     compactMode: false,
 
-    // Privacidad
-    dataSharing: false,
-    analytics: true,
+
   })
 
   const handleSettingChange = (key: string, value: any) => {
@@ -95,18 +95,17 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 sm:space-y-8 main-content pt-20 md:pt-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen responsive-container">
+    <div className="flex-1 space-y-4 sm:space-y-5 main-content pt-16 md:pt-6 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen responsive-container">
       <div className="flex items-center space-x-2">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight gradient-text">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
           Configuración
         </h2>
       </div>
 
-      <Tabs defaultValue="profile" className="space-y-6 w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 h-auto p-1">
+      <Tabs defaultValue="profile" className="space-y-4 w-full">
+        <TabsList className="grid w-full grid-cols-3 gap-1 sm:gap-2 h-auto p-1">
           <TabsTrigger value="profile" className="text-xs sm:text-sm px-2 py-2 sm:px-4 sm:py-2">Perfil</TabsTrigger>
           <TabsTrigger value="notifications" className="text-xs sm:text-sm px-2 py-2 sm:px-4 sm:py-2">Notific.</TabsTrigger>
-          <TabsTrigger value="privacy" className="text-xs sm:text-sm px-2 py-2 sm:px-4 sm:py-2">Privacidad</TabsTrigger>
           <TabsTrigger value="data" className="text-xs sm:text-sm px-2 py-2 sm:px-4 sm:py-2">Datos</TabsTrigger>
         </TabsList>
 
@@ -150,16 +149,19 @@ export default function SettingsPage() {
               <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="currency" className="text-slate-700 dark:text-slate-300 font-medium">Moneda predeterminada</Label>
-                  <Select value={settings.currency} onValueChange={(value) => handleSettingChange("currency", value)}>
+                  <Select value={currency.code} onValueChange={(value) => {
+                    const selectedCurrency = CURRENCIES.find(c => c.code === value);
+                    if (selectedCurrency) {
+                      setCurrency(selectedCurrency);
+                    }
+                  }}>
                     <SelectTrigger className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USD">🇺🇸 Dólar (USD)</SelectItem>
-                      <SelectItem value="EUR">🇪🇺 Euro (EUR)</SelectItem>
-                      <SelectItem value="MXN">🇲🇽 Peso Mexicano (MXN)</SelectItem>
-                      <SelectItem value="COP">🇨🇴 Peso Colombiano (COP)</SelectItem>
-                      <SelectItem value="ARS">🇦🇷 Peso Argentino (ARS)</SelectItem>
+                      <SelectItem value="PEN">🇵🇪 Sol Peruano (S/)</SelectItem>
+                      <SelectItem value="USD">🇺🇸 Dólar Estadounidense ($)</SelectItem>
+                      <SelectItem value="EUR">🇪🇺 Euro (€)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -243,45 +245,7 @@ export default function SettingsPage() {
 
         {/* Sección de apariencia/tema eliminada completamente */}
 
-        {/* Privacidad */}
-        <TabsContent value="privacy" className="space-y-6">
-          <div className="responsive-card glass-card p-4 sm:p-6 lg:p-8">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg">
-                <Lock className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">Privacidad y Seguridad</h3>
-                <p className="text-sm text-slate-600">Controla cómo se usan tus datos</p>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 bg-slate-50/80 rounded-2xl">
-                <div className="space-y-1">
-                  <Label className="text-slate-700 font-medium">Compartir datos anónimos</Label>
-                  <p className="text-sm text-slate-500">
-                    Ayuda a mejorar la aplicación compartiendo datos anónimos
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.dataSharing}
-                  onCheckedChange={(checked) => handleSettingChange("dataSharing", checked)}
-                />
-              </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 bg-slate-50/80 rounded-2xl">
-                <div className="space-y-1">
-                  <Label className="text-slate-700 font-medium">Analytics</Label>
-                  <p className="text-sm text-slate-500">Permitir análisis de uso para mejorar la experiencia</p>
-                </div>
-                <Switch
-                  checked={settings.analytics}
-                  onCheckedChange={(checked) => handleSettingChange("analytics", checked)}
-                />
-              </div>
-            </div>
-          </div>
-        </TabsContent>
 
         {/* Datos */}
         <TabsContent value="data" className="space-y-6">
@@ -322,8 +286,8 @@ export default function SettingsPage() {
 
               <div className="h-px bg-slate-200/50 my-6"></div>
 
-              <div className="space-y-4">
-                <div className="p-4 bg-red-50/80 rounded-2xl border border-red-200/50">
+              <div className="space-y-3">
+                <div className="p-3 bg-slate-50/80 rounded-xl border border-red-200/50">
                   <Label className="text-red-700 font-semibold text-lg">Zona de Peligro</Label>
                   <p className="text-sm text-red-600 mt-2 mb-4">Estas acciones son irreversibles. Procede con cuidado.</p>
                   <Button 

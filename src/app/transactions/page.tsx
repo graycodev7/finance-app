@@ -85,14 +85,14 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 sm:space-y-8 main-content pt-20 md:pt-8 min-h-screen responsive-container">
+    <div className="flex-1 space-y-4 sm:space-y-5 main-content pt-16 md:pt-6 min-h-screen responsive-container">
       <div className="flex items-center space-x-2">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight gradient-text">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
           Agregar Transacción
         </h2>
       </div>
 
-      <Tabs defaultValue="single" className="space-y-6 w-full">
+      <Tabs defaultValue="single" className="space-y-4 w-full">
         <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 h-auto p-1">
           <TabsTrigger value="single" className="text-sm px-4 py-3 sm:px-6 sm:py-3">Transacción Individual</TabsTrigger>
           <TabsTrigger value="bulk" className="text-sm px-4 py-3 sm:px-6 sm:py-3">Múltiples Transacciones</TabsTrigger>
@@ -101,7 +101,7 @@ export default function TransactionsPage() {
         <TabsContent value="single">
           <div className="responsive-grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
             {/* Formulario */}
-            <div className="responsive-card card-blue p-4 sm:p-6 lg:p-8">
+            <div className="responsive-card card-blue p-3 sm:p-4 lg:p-5">
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 rounded-2xl bg-blue-500/10">
@@ -112,7 +112,7 @@ export default function TransactionsPage() {
                 <p className="text-sm text-blue-700/70">Registra un nuevo ingreso o gasto en tu control financiero</p>
               </div>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Tipo de transacción */}
                 <div className="space-y-2">
                   <Label htmlFor="type" className="text-blue-900 font-medium">Tipo de Transacción *</Label>
@@ -211,13 +211,13 @@ export default function TransactionsPage() {
             </div>
 
             {/* Vista previa */}
-            <div className="responsive-card card-slate p-4 sm:p-6 lg:p-8">
+            <div className="responsive-card card-slate p-3 sm:p-4 lg:p-5">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Vista Previa</h3>
                 <p className="text-sm text-slate-600">Así se verá tu transacción una vez guardada</p>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className={`p-6 rounded-2xl ${
                   formData.type === "income"
                     ? "bg-gradient-to-r from-emerald-50 to-emerald-100"
@@ -239,7 +239,7 @@ export default function TransactionsPage() {
                   </div>
                 </div>
 
-                <div className="space-y-4 text-sm">
+                <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center p-4 bg-slate-50/80 rounded-xl">
                     <span className="font-medium">Tipo:</span>
                     <span className="font-semibold">{formData.type === "income" ? "💰 Ingreso" : "💸 Gasto"}</span>
@@ -263,7 +263,7 @@ export default function TransactionsPage() {
         </TabsContent>
 
         <TabsContent value="bulk">
-          <div className="responsive-card glass-card p-4 sm:p-6 lg:p-8 text-center">
+          <div className="responsive-card glass-card p-3 sm:p-4 lg:p-5 text-center">
             <h3 className="text-xl font-bold text-slate-900 mb-4">Múltiples Transacciones</h3>
             <p className="text-slate-600 mb-6">Agrega varias transacciones de una vez (próximamente)</p>
             <div className="py-16">

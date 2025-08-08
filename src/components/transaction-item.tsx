@@ -30,7 +30,7 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
 
   // Memoizar los estilos del icono para evitar recálculos
   const iconContainerClass = useMemo(() => 
-    `flex items-center justify-center w-12 h-12 rounded-2xl shadow-sm ${
+    `flex items-center justify-center w-10 h-10 rounded-xl shadow-sm ${
       transaction.type === "income"
         ? "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600"
         : "bg-gradient-to-br from-rose-50 to-rose-100 text-rose-600"
@@ -43,17 +43,17 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
   );
 
   return (
-    <div className="group flex items-center justify-between p-6 rounded-2xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 shadow-sm hover:shadow-lg border-0">
-      <div className="flex items-center space-x-4">
+    <div className="group flex items-center justify-between p-4 rounded-xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 shadow-sm hover:shadow-lg border-0">
+      <div className="flex items-center space-x-3">
         <div className={iconContainerClass}>
           {transaction.type === "income" ? (
-            <ArrowUpIcon className="h-5 w-5" />
+            <ArrowUpIcon className="h-4 w-4" />
           ) : (
-            <ArrowDownIcon className="h-5 w-5" />
+            <ArrowDownIcon className="h-4 w-4" />
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-foreground truncate text-lg">{transaction.description}</p>
+          <p className="font-semibold text-foreground truncate text-base">{transaction.description}</p>
           <p className="text-sm text-muted-foreground font-medium">
             {transaction.category} • {formattedDate}
           </p>
@@ -65,9 +65,9 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
         </div>
       </div>
 
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2">
         <div
-          className={`font-bold text-xl px-4 py-2 rounded-2xl ${
+          className={`font-bold text-lg px-3 py-1.5 rounded-xl ${
             transaction.type === "income" 
               ? "text-emerald-700 bg-emerald-50/80" 
               : "text-rose-700 bg-rose-50/80"
@@ -82,7 +82,7 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-muted-foreground hover:text-rose-600 hover:bg-rose-50/80 rounded-2xl border-0 shadow-sm hover:shadow-lg"
+                className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-muted-foreground hover:text-rose-600 hover:bg-rose-50/80 rounded-xl border-0 shadow-sm hover:shadow-lg"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

@@ -135,19 +135,19 @@ export function CalculatorModal({ open, onOpenChange }: CalculatorModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-xl font-semibold">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Calculator className="h-5 w-5 text-primary" />
+      <DialogContent className="sm:max-w-md rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur">
+        <DialogHeader className="pb-3">
+          <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100 text-lg font-semibold">
+            <div className="p-1.5 rounded-lg bg-primary/10">
+              <Calculator className="h-4 w-4 text-primary" />
             </div>
             Calculadora
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Display mejorado */}
-          <div className="bg-gradient-to-r from-white to-slate-100 dark:from-slate-800 dark:to-slate-700 p-6 rounded-xl shadow-inner min-h-[80px] flex items-center justify-end">
+          <div className="bg-gradient-to-r from-white to-slate-100 dark:from-slate-800 dark:to-slate-700 p-4 rounded-xl shadow-inner min-h-[60px] flex items-center justify-end">
             <div 
               className={`font-mono font-bold text-slate-900 dark:text-slate-100 ${getFontSize()} leading-tight overflow-hidden`}
               style={{

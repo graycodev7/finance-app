@@ -60,20 +60,20 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="flex-1 space-y-8 p-6 md:p-10 pt-20 md:pt-8 main-content min-h-screen">
+    <div className="flex-1 space-y-4 sm:space-y-5 main-content pt-16 md:pt-6 min-h-screen responsive-container">
       <div className="flex items-center space-x-2">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight gradient-text">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
           Historial de Transacciones
         </h2>
       </div>
 
       {/* Filtros y búsqueda */}
-      <div className="card-purple p-8">
+      <div className="card-purple p-3 sm:p-4 lg:p-5">
         <div className="mb-6">
           <h3 className="text-xl font-bold text-purple-900 mb-2">Filtros y Búsqueda</h3>
           <p className="text-sm text-purple-700/70">Encuentra transacciones específicas usando los filtros</p>
         </div>
-        <div className="grid gap-6 md:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-4">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-purple-600/70" />
             <Input
@@ -120,7 +120,7 @@ export default function HistoryPage() {
       </div>
 
       {/* Lista de transacciones */}
-      <div className="glass-card p-8">
+      <div className="glass-card p-3 sm:p-4 lg:p-5">
         <div className="mb-6">
           <h3 className="text-xl font-bold text-slate-900 mb-2">
             Transacciones ({filteredTransactions.length})
@@ -131,7 +131,7 @@ export default function HistoryPage() {
               : `Mostrando ${filteredTransactions.length} de ${transactions.length} transacciones`}
           </p>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filteredTransactions.length > 0 ? (
             filteredTransactions.map((transaction) => (
               <div key={transaction.id} className="p-4 bg-slate-50/80 rounded-2xl">

@@ -8,8 +8,10 @@ import { DashboardCharts } from "@/components/dashboard-charts"
 import { ReportsSection } from "@/components/reports-section"
 import { ArrowDownIcon, ArrowUpIcon, Wallet, AlertTriangle, Target } from "lucide-react"
 import { useTransactions } from "@/components/transaction-provider"
+import { useCurrency } from "@/components/currency-provider"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { TransactionItem } from "@/components/transaction-item"
+import { AuthWrapper } from "@/components/auth-wrapper"
 
 export default function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState("all")
@@ -27,6 +29,8 @@ export default function Dashboard() {
     getMonthlyData,
     getTopExpenseCategories,
   } = useTransactions()
+  
+  const { formatAmount } = useCurrency()
 
   // Memoizar cálculos costosos
   const displayTransactions = useMemo(() => 
@@ -92,12 +96,13 @@ export default function Dashboard() {
   }, [transactions.length, totalIncome, totalExpenses, savingsRate, topExpenseCategory, balance])
 
   return (
-    <div className="flex-1 space-y-6 sm:space-y-8 main-content pt-20 md:pt-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen responsive-container">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0 w-full">
-        <div className="flex items-center space-x-2">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-            Dashboard Financiero
-          </h2>
+    <AuthWrapper>
+      <div className="flex-1 space-y-4 sm:space-y-5 main-content pt-16 md:pt-6 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen responsive-container">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0 w-full">
+          <div className="flex items-center space-x-2">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Dashboard Financiero
+            </h2>
         </div>
         <div className="flex items-center space-x-2">
           <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
@@ -132,11 +137,11 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Tarjetas de resumen - DISEÑO COMPLETAMENTE NUEVO */}
-      <div className="responsive-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+      {/* Tarjetas de resumen - DISEÑO COMPACTO */}
+      <div className="responsive-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
         {/* Ingresos */}
         <div 
-          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-emerald-100/50 hover:shadow-xl hover:shadow-emerald-200/50 transition-all duration-300 border-0"
+          className="group relative overflow-hidden p-4 rounded-2xl shadow-md shadow-emerald-100/50 hover:shadow-lg hover:shadow-emerald-200/50 transition-all duration-300 border-0"
           style={{
             background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
             backgroundColor: '#ecfdf5'
@@ -144,14 +149,14 @@ export default function Dashboard() {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-emerald-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-medium text-emerald-700">Ingresos Totales</p>
-              <div className="p-3 rounded-2xl bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors duration-300">
-                <ArrowUpIcon className="h-5 w-5 text-emerald-600" />
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-medium text-emerald-700">Ingresos Totales</p>
+              <div className="p-2 rounded-xl bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors duration-300">
+                <ArrowUpIcon className="h-4 w-4 text-emerald-600" />
               </div>
             </div>
-            <div className="text-3xl md:text-4xl font-bold text-emerald-700 mb-2">
-              ${totalIncome.toLocaleString()}
+            <div className="text-2xl md:text-2xl font-bold text-emerald-700 mb-1">
+              {formatAmount(totalIncome)}
             </div>
             <p className="text-xs text-emerald-600/70">Total acumulado</p>
           </div>
@@ -159,7 +164,7 @@ export default function Dashboard() {
 
         {/* Gastos */}
         <div 
-          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-rose-100/50 hover:shadow-xl hover:shadow-rose-200/50 transition-all duration-300 border-0"
+          className="group relative overflow-hidden p-4 rounded-2xl shadow-md shadow-rose-100/50 hover:shadow-lg hover:shadow-rose-200/50 transition-all duration-300 border-0"
           style={{
             background: 'linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%)',
             backgroundColor: '#fff1f2'
@@ -167,14 +172,14 @@ export default function Dashboard() {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-rose-400/10 to-rose-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-medium text-rose-700">Gastos Totales</p>
-              <div className="p-3 rounded-2xl bg-rose-500/10 group-hover:bg-rose-500/20 transition-colors duration-300">
-                <ArrowDownIcon className="h-5 w-5 text-rose-600" />
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-medium text-rose-700">Gastos Totales</p>
+              <div className="p-2 rounded-xl bg-rose-500/10 group-hover:bg-rose-500/20 transition-colors duration-300">
+                <ArrowDownIcon className="h-4 w-4 text-rose-600" />
               </div>
             </div>
-            <div className="text-3xl md:text-4xl font-bold text-rose-700 mb-2">
-              ${totalExpenses.toLocaleString()}
+            <div className="text-2xl md:text-2xl font-bold text-rose-700 mb-1">
+              {formatAmount(totalExpenses)}
             </div>
             <p className="text-xs text-rose-600/70">Total acumulado</p>
           </div>
@@ -182,7 +187,7 @@ export default function Dashboard() {
 
         {/* Balance */}
         <div 
-          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-blue-100/50 hover:shadow-xl hover:shadow-blue-200/50 transition-all duration-300 border-0"
+          className="group relative overflow-hidden p-4 rounded-2xl shadow-md shadow-blue-100/50 hover:shadow-lg hover:shadow-blue-200/50 transition-all duration-300 border-0"
           style={{
             background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
             backgroundColor: '#eff6ff'
@@ -190,14 +195,14 @@ export default function Dashboard() {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-medium text-blue-700">Balance</p>
-              <div className="p-3 rounded-2xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors duration-300">
-                <Wallet className="h-5 w-5 text-blue-600" />
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-medium text-blue-700">Balance</p>
+              <div className="p-2 rounded-xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors duration-300">
+                <Wallet className="h-4 w-4 text-blue-600" />
               </div>
             </div>
-            <div className={`text-3xl md:text-4xl font-bold mb-2 ${balance >= 0 ? "text-blue-700" : "text-rose-700"}`}>
-              ${balance.toLocaleString()}
+            <div className={`text-2xl md:text-2xl font-bold mb-1 ${balance >= 0 ? "text-blue-700" : "text-red-700"}`}>
+              {formatAmount(balance)}
             </div>
             <p className="text-xs text-blue-600/70">Balance actual disponible</p>
           </div>
@@ -205,7 +210,7 @@ export default function Dashboard() {
 
         {/* Tasa de Ahorro */}
         <div 
-          className="group relative overflow-hidden p-6 rounded-3xl shadow-lg shadow-amber-100/50 hover:shadow-xl hover:shadow-amber-200/50 transition-all duration-300 border-0"
+          className="group relative overflow-hidden p-4 rounded-2xl shadow-md shadow-amber-100/50 hover:shadow-lg hover:shadow-amber-200/50 transition-all duration-300 border-0"
           style={{
             background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
             backgroundColor: '#fffbeb'
@@ -213,13 +218,13 @@ export default function Dashboard() {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-amber-400/10 to-amber-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-medium text-amber-700">Tasa de Ahorro</p>
-              <div className="p-3 rounded-2xl bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors duration-300">
-                <Target className="h-5 w-5 text-amber-600" />
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-medium text-amber-700">Tasa de Ahorro</p>
+              <div className="p-2 rounded-xl bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors duration-300">
+                <Target className="h-4 w-4 text-amber-600" />
               </div>
             </div>
-            <div className={`text-3xl md:text-4xl font-bold mb-2 ${Number(savingsRate) >= 20 ? "text-amber-700" : "text-amber-700"}`}>
+            <div className={`text-2xl md:text-2xl font-bold mb-1 ${Number(savingsRate) >= 20 ? "text-amber-700" : "text-amber-700"}`}>
               {savingsRate}%
             </div>
             <p className="text-xs text-amber-600/70">{Number(savingsRate) >= 20 ? "¡Excelente!" : "Mejorable"}</p>
@@ -228,22 +233,22 @@ export default function Dashboard() {
       </div>
 
       {/* Gráficos - Rediseñados */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm shadow-lg shadow-slate-200/50 rounded-2xl border-0 p-2">
-          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-slate-900 data-[state=active]:text-white">Gráficos</TabsTrigger>
-          <TabsTrigger value="analytics" className="rounded-xl data-[state=active]:bg-slate-900 data-[state=active]:text-white">Análisis</TabsTrigger>
-          <TabsTrigger value="reports" className="rounded-xl data-[state=active]:bg-slate-900 data-[state=active]:text-white">Reportes</TabsTrigger>
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm shadow-md shadow-slate-200/50 rounded-xl border-0 p-1.5">
+          <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-slate-900 data-[state=active]:text-white text-sm">Gráficos</TabsTrigger>
+          <TabsTrigger value="analytics" className="rounded-lg data-[state=active]:bg-slate-900 data-[state=active]:text-white text-sm">Análisis</TabsTrigger>
+          <TabsTrigger value="reports" className="rounded-lg data-[state=active]:bg-slate-900 data-[state=active]:text-white text-sm">Reportes</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-slate-200/50 border-0 p-4 sm:p-6 lg:p-8 chart-container">
+        <TabsContent value="overview" className="space-y-4">
+          <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-slate-200/50 border-0 p-4 sm:p-5 lg:p-6 chart-container">
             <DashboardCharts transactions={transactions} monthlyData={monthlyData} topCategories={topCategories} />
           </div>
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="responsive-grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-            <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-slate-200/50 border-0 p-4 sm:p-6 lg:p-8">
+        <TabsContent value="analytics" className="space-y-4">
+          <div className="responsive-grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
+            <div className="responsive-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-slate-200/50 border-0 p-4 sm:p-5 lg:p-6">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Análisis de Patrones</h3>
                 <p className="text-sm text-slate-600">Insights sobre tus hábitos financieros</p>
@@ -345,6 +350,7 @@ export default function Dashboard() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </AuthWrapper>
   )
 }

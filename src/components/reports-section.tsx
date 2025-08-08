@@ -117,16 +117,16 @@ export function ReportsSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Resumen ejecutivo */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Transacciones Totales</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{transactions.length}</div>
+          <CardContent className="pt-2">
+            <div className="text-xl font-bold">{transactions.length}</div>
             <p className="text-xs text-muted-foreground">Registros en total</p>
           </CardContent>
         </Card>
@@ -136,8 +136,8 @@ export function ReportsSection() {
             <CardTitle className="text-sm font-medium">Meses con Datos</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{monthlyData.length}</div>
+          <CardContent className="pt-2">
+            <div className="text-xl font-bold">{monthlyData.length}</div>
             <p className="text-xs text-muted-foreground">Períodos registrados</p>
           </CardContent>
         </Card>
@@ -147,8 +147,8 @@ export function ReportsSection() {
             <CardTitle className="text-sm font-medium">Categorías Activas</CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{topCategories.length}</div>
+          <CardContent className="pt-2">
+            <div className="text-xl font-bold">{topCategories.length}</div>
             <p className="text-xs text-muted-foreground">Categorías diferentes</p>
           </CardContent>
         </Card>

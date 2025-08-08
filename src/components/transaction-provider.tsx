@@ -2,9 +2,12 @@
 
 import type React from "react";
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { apiClient, type Transaction as ApiTransaction } from "@/lib/api";
+import { useAuth } from "./auth-provider";
 
+// Updated interface to match backend API
 export interface Transaction {
-  id: string;
+  id: string; // Keep as string for frontend compatibility
   type: "income" | "expense";
   amount: number;
   description: string;
@@ -16,8 +19,12 @@ export interface Transaction {
 
 interface TransactionContextType {
   transactions: Transaction[];
-  addTransaction: (transaction: Omit<Transaction, "id" | "createdAt">) => void;
-  deleteTransaction: (id: string) => void;
+  isLoading: boolean;
+  error: string | null;
+  addTransaction: (transaction: Omit<Transaction, "id" | "createdAt">) => Promise<void>;
+  deleteTransaction: (id: string) => Promise<void>;
+  updateTransaction: (id: string, transaction: Partial<Omit<Transaction, "id" | "createdAt">>) => Promise<void>;
+  refreshTransactions: () => Promise<void>;
   getTransactionsByPeriod: (period: string) => Transaction[];
   getTotalIncome: () => number;
   getTotalExpenses: () => number;
@@ -29,75 +36,145 @@ interface TransactionContextType {
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 
-// Inicializar con array vacío para aplicación limpia
-const initialTransactions: Transaction[] = [];
-
-// Opcional: Si quieres datos de ejemplo para pruebas, descomenta las siguientes líneas:
-// const sampleTransactions: Transaction[] = [
-//   {
-//     id: "sample-1",
-//     type: "income",
-//     amount: 3000,
-//     description: "Salario",
-//     category: "Trabajo",
-//     date: new Date().toISOString().split('T')[0],
-//     createdAt: new Date().toISOString(),
-//   },
-//   {
-//     id: "sample-2",
-//     type: "expense",
-//     amount: 800,
-//     description: "Renta",
-//     category: "Vivienda",
-//     date: new Date().toISOString().split('T')[0],
-//     createdAt: new Date().toISOString(),
-//   },
-// ];
+// Helper function to convert API transaction to frontend format
+function convertApiTransaction(apiTransaction: ApiTransaction): Transaction {
+  return {
+    id: apiTransaction.id.toString(),
+    type: apiTransaction.type,
+    amount: apiTransaction.amount,
+    description: apiTransaction.description,
+    category: apiTransaction.category,
+    date: apiTransaction.date,
+    createdAt: apiTransaction.created_at,
+  };
+}
 
 export function TransactionProvider({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // LIMPIAR localStorage existente y forzar inicio limpio
-    localStorage.removeItem("financial-transactions");
-    
-    // Inicializar siempre con array vacío para aplicación limpia
-    setTransactions(initialTransactions);
-    
-    // Opcional: Si quieres restaurar el comportamiento de persistencia, 
-    // descomenta las siguientes líneas y comenta las de arriba:
-    // const savedTransactions = localStorage.getItem("financial-transactions");
-    // if (savedTransactions) {
-    //   try {
-    //     setTransactions(JSON.parse(savedTransactions));
-    //   } catch (error) {
-    //     console.error("Error loading transactions:", error);
-    //     setTransactions(initialTransactions);
-    //   }
-    // } else {
-    //   setTransactions(initialTransactions);
-    // }
-  }, []);
+  // Load transactions from backend when authenticated
+  const refreshTransactions = useCallback(async () => {
+    if (!isAuthenticated || authLoading) return;
 
-  useEffect(() => {
-    // Guardar transacciones en localStorage
-    if (transactions.length > 0) {
-      localStorage.setItem("financial-transactions", JSON.stringify(transactions));
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await apiClient.getTransactions();
+
+      if (response.success && response.data) {
+        const convertedTransactions = response.data.transactions.map(convertApiTransaction);
+        setTransactions(convertedTransactions);
+      } else {
+        throw new Error(response.message || 'Failed to load transactions');
+      }
+    } catch (err) {
+      console.error('Error loading transactions:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load transactions');
+      setTransactions([]);
+    } finally {
+      setIsLoading(false);
     }
-  }, [transactions]);
+  }, [isAuthenticated, authLoading]);
 
-  const addTransaction = useCallback((transactionData: Omit<Transaction, "id" | "createdAt">) => {
-    const newTransaction: Transaction = {
-      ...transactionData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-    };
-    setTransactions((prev) => [newTransaction, ...prev]);
-  }, []);
+  // Load transactions on mount and when auth state changes
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      refreshTransactions();
+    } else if (!isAuthenticated && !authLoading) {
+      // Clear transactions when not authenticated
+      setTransactions([]);
+      setError(null);
+    }
+  }, [isAuthenticated, authLoading, refreshTransactions]);
 
-  const deleteTransaction = useCallback((id: string) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
-  }, []);
+  const addTransaction = useCallback(async (transactionData: Omit<Transaction, "id" | "createdAt">) => {
+    if (!isAuthenticated) {
+      throw new Error('Must be authenticated to add transactions');
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await apiClient.createTransaction({
+        type: transactionData.type,
+        amount: transactionData.amount,
+        category: transactionData.category,
+        description: transactionData.description,
+        date: transactionData.date,
+      });
+
+      if (response.success && response.data) {
+        const newTransaction = convertApiTransaction(response.data.transaction);
+        setTransactions((prev) => [newTransaction, ...prev]);
+      } else {
+        throw new Error(response.message || 'Failed to create transaction');
+      }
+    } catch (err) {
+      console.error('Error creating transaction:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create transaction');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  const updateTransaction = useCallback(async (id: string, transactionData: Partial<Omit<Transaction, "id" | "createdAt">>) => {
+    if (!isAuthenticated) {
+      throw new Error('Must be authenticated to update transactions');
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await apiClient.updateTransaction(parseInt(id), transactionData);
+
+      if (response.success && response.data) {
+        const updatedTransaction = convertApiTransaction(response.data.transaction);
+        setTransactions((prev) =>
+          prev.map((t) => (t.id === id ? updatedTransaction : t))
+        );
+      } else {
+        throw new Error(response.message || 'Failed to update transaction');
+      }
+    } catch (err) {
+      console.error('Error updating transaction:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update transaction');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  const deleteTransaction = useCallback(async (id: string) => {
+    if (!isAuthenticated) {
+      throw new Error('Must be authenticated to delete transactions');
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await apiClient.deleteTransaction(parseInt(id));
+
+      if (response.success) {
+        setTransactions((prev) => prev.filter((t) => t.id !== id));
+      } else {
+        throw new Error(response.message || 'Failed to delete transaction');
+      }
+    } catch (err) {
+      console.error('Error deleting transaction:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete transaction');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const getTransactionsByPeriod = useCallback((period: string) => {
     const now = new Date();
@@ -195,8 +272,12 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
   const contextValue = useMemo(
     () => ({
       transactions,
+      isLoading,
+      error,
       addTransaction,
       deleteTransaction,
+      updateTransaction,
+      refreshTransactions,
       getTransactionsByPeriod,
       getTotalIncome,
       getTotalExpenses,
@@ -207,8 +288,12 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
     }),
     [
       transactions,
+      isLoading,
+      error,
       addTransaction,
       deleteTransaction,
+      updateTransaction,
+      refreshTransactions,
       getTransactionsByPeriod,
       getTotalIncome,
       getTotalExpenses,

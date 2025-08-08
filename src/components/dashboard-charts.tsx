@@ -45,9 +45,9 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
 
   if (transactions.length === 0) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div className="col-span-full glass-card p-8 text-center">
-          <p className="text-muted-foreground text-lg">No hay datos suficientes para mostrar gráficos</p>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="col-span-full glass-card p-6 text-center">
+          <p className="text-muted-foreground text-base">No hay datos suficientes para mostrar gráficos</p>
           <p className="text-sm text-muted-foreground mt-2">Agrega algunas transacciones para ver los análisis</p>
         </div>
       </div>
@@ -55,21 +55,21 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {/* Gráfico de área moderno - Ingresos vs Gastos por mes (SIN BALANCE) */}
       {monthlyData.length > 0 && (
-        <div className="col-span-full lg:col-span-2 glass-card p-8 relative overflow-hidden">
+        <div className="col-span-full lg:col-span-2 glass-card p-6 relative overflow-hidden">
           {/* Gradiente de fondo decorativo más sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/20 via-blue-50/10 to-purple-50/20 pointer-events-none" />
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-200/20 to-transparent rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-red-200/20 to-transparent rounded-full blur-2xl" />
           
           <div className="relative z-10">
-            <div className="mb-8">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-1 h-10 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full shadow-lg" />
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-1 h-8 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full shadow-lg" />
                 <div>
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-600 bg-clip-text text-transparent">
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-600 bg-clip-text text-transparent">
                     Flujo Financiero Mensual
                   </h3>
                   <p className="text-slate-600 text-sm mt-1">Evolución detallada de tus finanzas</p>
