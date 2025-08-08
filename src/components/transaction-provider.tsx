@@ -72,7 +72,6 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
         throw new Error(response.message || 'Failed to load transactions');
       }
     } catch (err) {
-      console.error('Error loading transactions:', err);
       setError(err instanceof Error ? err.message : 'Failed to load transactions');
       setTransactions([]);
     } finally {
@@ -115,9 +114,7 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
         throw new Error(response.message || 'Failed to create transaction');
       }
     } catch (err) {
-      console.error('Error creating transaction:', err);
       setError(err instanceof Error ? err.message : 'Failed to create transaction');
-      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -143,9 +140,7 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
         throw new Error(response.message || 'Failed to update transaction');
       }
     } catch (err) {
-      console.error('Error updating transaction:', err);
       setError(err instanceof Error ? err.message : 'Failed to update transaction');
-      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -168,9 +163,7 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
         throw new Error(response.message || 'Failed to delete transaction');
       }
     } catch (err) {
-      console.error('Error deleting transaction:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete transaction');
-      throw err;
     } finally {
       setIsLoading(false);
     }

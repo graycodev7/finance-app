@@ -1,14 +1,14 @@
 "use client";
 
-import { Calculator, BarChartIcon as ChartBar, Home, PlusCircle, Settings, History, Menu, X, LogOut, User } from "lucide-react";
+import { Calculator, BarChartIcon as ChartBar, Home, PlusCircle, Settings, History, Menu, X, LogOut, User, AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { CalculatorModal } from "@/components/calculator-modal";
-
-import { useAuth } from "@/components/auth-provider";
 import { cn } from "@/lib/utils";
+import { CalculatorModal } from "./calculator-modal";
+import { useAuth } from "./auth-provider";
 
 const menuItems = [
   {
@@ -37,6 +37,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const { user, logout } = useAuth();
 
   return (
@@ -123,7 +124,7 @@ export function AppSidebar() {
             
             {/* Logout Button */}
             <Button 
-              onClick={logout}
+              onClick={() => setLogoutConfirmOpen(true)}
               variant="outline"
               className="w-full h-10 text-slate-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50"
             >
@@ -135,6 +136,45 @@ export function AppSidebar() {
       </aside>
 
       <CalculatorModal open={calculatorOpen} onOpenChange={setCalculatorOpen} />
+      
+      {/* Modal de confirmación para cerrar sesión */}
+      <Dialog open={logoutConfirmOpen} onOpenChange={setLogoutConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-orange-600">
+              <AlertTriangle className="h-5 w-5" />
+              Confirmar cierre de sesión
+            </DialogTitle>
+            <DialogDescription className="text-slate-600">
+              ¿Estás seguro de que deseas cerrar sesión?
+              <br />
+              <span className="text-sm text-slate-500 mt-2 block">
+                Tendrás que volver a iniciar sesión para acceder a tu cuenta.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setLogoutConfirmOpen(false)}
+              className="w-full sm:w-auto"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => {
+                setLogoutConfirmOpen(false);
+                logout();
+              }}
+              className="w-full sm:w-auto"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sí, cerrar sesión
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

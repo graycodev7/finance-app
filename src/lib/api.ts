@@ -14,6 +14,11 @@ interface LoginResponse {
     name: string;
   };
   token: string;
+  // New fields for advanced auth
+  accessToken?: string;
+  refreshToken?: string;
+  accessTokenExpiry?: string;
+  refreshTokenExpiry?: string;
 }
 
 interface Transaction {
@@ -37,26 +42,143 @@ interface TransactionStats {
 }
 
 class ApiClient {
+  private isRefreshing = false;
+  private failedQueue: Array<{
+    resolve: (token: string) => void;
+    reject: (error: any) => void;
+  }> = [];
+
   private getAuthHeaders(): HeadersInit {
-    const token = localStorage.getItem('auth_token');
+    // Try new token format first, fallback to old format
+    const accessToken = localStorage.getItem('access_token');
+    const oldToken = localStorage.getItem('auth_token');
+    const token = accessToken || oldToken;
+    
     return {
       'Content-Type': 'application/json',
       ...(token && { 'Authorization': `Bearer ${token}` }),
     };
   }
 
+  private async refreshAccessToken(): Promise<string> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${refreshToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Token refresh failed');
+      }
+
+      const data = await response.json();
+      if (data.success && data.data) {
+        const { accessToken, refreshToken: newRefreshToken } = data.data;
+        
+        // Update stored tokens
+        localStorage.setItem('access_token', accessToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refresh_token', newRefreshToken);
+        }
+        
+        return accessToken;
+      } else {
+        throw new Error('Invalid refresh response');
+      }
+    } catch (error) {
+      // Clear tokens on refresh failure
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      throw error;
+    }
+  }
+
+  private processQueue(error: any, token: string | null = null) {
+    this.failedQueue.forEach(({ resolve, reject }) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(token!);
+      }
+    });
+    
+    this.failedQueue = [];
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
+    const fullUrl = `${API_BASE_URL}${endpoint}`;
+    
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const response = await fetch(fullUrl, {
         ...options,
         headers: {
           ...this.getAuthHeaders(),
           ...options.headers,
         },
       });
+
+      // Handle 401 Unauthorized - token might be expired
+      if (response.status === 401 && !endpoint.includes('/auth/')) {
+        const refreshToken = localStorage.getItem('refresh_token');
+        
+        if (refreshToken && !this.isRefreshing) {
+          if (this.isRefreshing) {
+            // If already refreshing, queue this request
+            return new Promise((resolve, reject) => {
+              this.failedQueue.push({ resolve: (token: string) => {
+                // Retry original request with new token
+                this.request<T>(endpoint, {
+                  ...options,
+                  headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${token}`,
+                  },
+                }).then(resolve).catch(reject);
+              }, reject });
+            });
+          }
+
+          this.isRefreshing = true;
+
+          try {
+            const newToken = await this.refreshAccessToken();
+            this.processQueue(null, newToken);
+            
+            // Retry original request with new token
+            return this.request<T>(endpoint, {
+              ...options,
+              headers: {
+                ...options.headers,
+                'Authorization': `Bearer ${newToken}`,
+              },
+            });
+          } catch (refreshError) {
+            this.processQueue(refreshError, null);
+            // Redirect to login or handle auth failure
+            window.location.href = '/auth';
+            throw refreshError;
+          } finally {
+            this.isRefreshing = false;
+          }
+        } else {
+          // No refresh token, redirect to login
+          window.location.href = '/auth';
+          throw new Error('Authentication required');
+        }
+      }
 
       const data = await response.json();
 
@@ -66,7 +188,11 @@ class ApiClient {
 
       return data;
     } catch (error) {
-      console.error('API request failed:', error);
+      // Check if it's a network error
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('No se puede conectar al servidor. Verifica que el backend esté corriendo.');
+      }
+      
       throw error;
     }
   }
@@ -88,6 +214,26 @@ class ApiClient {
 
   async getProfile(): Promise<ApiResponse<{ user: LoginResponse['user'] }>> {
     return this.request<{ user: LoginResponse['user'] }>('/auth/profile');
+  }
+
+  async logout(): Promise<ApiResponse<void>> {
+    return this.request<void>('/auth/logout', {
+      method: 'POST',
+    });
+  }
+
+  async getSessions(): Promise<ApiResponse<{ sessions: any[] }>> {
+    return this.request<{ sessions: any[] }>('/auth/sessions');
+  }
+
+  async refreshToken(): Promise<ApiResponse<{ accessToken: string; refreshToken?: string }>> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    return this.request<{ accessToken: string; refreshToken?: string }>('/auth/refresh', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${refreshToken}`,
+      },
+    });
   }
 
   // Transaction endpoints

@@ -53,7 +53,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
           setCurrencyState(foundCurrency);
         }
       } catch (error) {
-        console.error("Error loading saved currency:", error);
+        // If there's an error loading, keep the default
       }
     }
   }, []);

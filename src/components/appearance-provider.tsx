@@ -28,8 +28,6 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
     const currentTheme = resolvedTheme || theme
     const shouldActivate = currentTheme === "dark"
     
-    console.log('Theme check:', { theme, resolvedTheme, currentTheme, shouldActivate })
-    
     if (customAppearance !== shouldActivate) {
       setCustomAppearance(shouldActivate)
     }
@@ -42,12 +40,8 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
     const htmlElement = document.documentElement
     if (customAppearance) {
       htmlElement.setAttribute('data-custom-appearance', 'true')
-      console.log('✅ Custom dark theme ACTIVATED - data-custom-appearance="true" applied to <html>')
-      console.log('HTML element classes:', htmlElement.className)
-      console.log('HTML element attributes:', [...htmlElement.attributes].map(attr => `${attr.name}="${attr.value}"`).join(', '))
     } else {
       htmlElement.removeAttribute('data-custom-appearance')
-      console.log('❌ Custom dark theme DEACTIVATED - data-custom-appearance removed from <html>')
     }
   }, [customAppearance, mounted])
 

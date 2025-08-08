@@ -10,7 +10,8 @@ import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
-import { Bell, Download, Globe, Lock, Palette, Settings, Trash2, Upload, User } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Bell, Download, Globe, Lock, Palette, Settings, Trash2, Upload, User, AlertTriangle } from "lucide-react"
 // import { useTheme } from "next-themes" // Ya no se usa
 import { useTransactions } from "@/components/transaction-provider"
 import { useCSVExport } from "@/hooks/use-csv-export"
@@ -44,6 +45,8 @@ export default function SettingsPage() {
 
 
   })
+
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
 
   const handleSettingChange = (key: string, value: any) => {
     setSettings((prev) => ({
@@ -86,7 +89,12 @@ export default function SettingsPage() {
   }
 
   const handleDeleteAllData = () => {
+    setDeleteConfirmOpen(true)
+  }
+
+  const confirmDeleteAllData = () => {
     localStorage.removeItem("financial-transactions")
+    setDeleteConfirmOpen(false)
     toast({
       title: "Datos eliminados",
       description: "Todos los datos han sido eliminados. Recarga la página para ver los cambios.",
@@ -316,6 +324,43 @@ export default function SettingsPage() {
           Guardar Configuración
         </Button>
       </div>
+
+      {/* Modal de confirmación para eliminar datos */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+              Confirmar eliminación
+            </DialogTitle>
+            <DialogDescription className="text-slate-600">
+              Esta acción es <strong>irreversible</strong>. Se eliminarán permanentemente:
+              <ul className="mt-2 ml-4 list-disc space-y-1">
+                <li>Todas las transacciones</li>
+                <li>Configuraciones personalizadas</li>
+                <li>Datos de respaldo local</li>
+              </ul>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteConfirmOpen(false)}
+              className="w-full sm:w-auto"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDeleteAllData}
+              className="w-full sm:w-auto"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Sí, eliminar todo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
