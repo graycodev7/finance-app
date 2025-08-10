@@ -20,18 +20,15 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
     setMounted(true)
   }, [])
 
-  // Sincronizar con el tema de next-themes
+  // Forzar siempre modo claro - deshabilitar tema oscuro
   useEffect(() => {
     if (!mounted) return
     
-    // Usar resolvedTheme para obtener el tema real (sistema resuelto)
-    const currentTheme = resolvedTheme || theme
-    const shouldActivate = currentTheme === "dark"
-    
-    if (customAppearance !== shouldActivate) {
-      setCustomAppearance(shouldActivate)
+    // Siempre forzar modo claro (customAppearance = false)
+    if (customAppearance !== false) {
+      setCustomAppearance(false)
     }
-  }, [theme, resolvedTheme, customAppearance, mounted])
+  }, [customAppearance, mounted])
 
   useEffect(() => {
     if (!mounted) return

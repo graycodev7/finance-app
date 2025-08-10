@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* CONFIGURACIÓN CORRECTA PARA TAILWIND V4 + NEXT-THEMES */
-@variant dark (&:where(.dark, .dark *));
-
 @theme {
   --color-background: 248 250 252;
   --color-foreground: 15 23 42;
