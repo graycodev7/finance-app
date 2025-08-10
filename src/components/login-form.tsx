@@ -56,10 +56,10 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 pb-4">
-          <CardTitle className="text-xl font-bold text-center">
+          <CardTitle className="text-xl font-bold text-center text-gray-900">
             {showRegister ? 'Crear Cuenta' : 'Iniciar Sesión'}
           </CardTitle>
-          <CardDescription className="text-center text-sm">
+          <CardDescription className="text-center text-sm text-gray-700">
             {showRegister 
               ? 'Crea tu cuenta para comenzar a gestionar tus finanzas'
               : 'Ingresa a tu cuenta para continuar'
@@ -70,7 +70,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
           <form onSubmit={handleSubmit} className="space-y-3">
             {showRegister && (
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre completo</Label>
+                <Label htmlFor="name" className="text-gray-800 font-medium">Nombre completo</Label>
                 <Input
                   id="name"
                   name="name"
@@ -85,7 +85,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-gray-800 font-medium">Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -99,7 +99,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password" className="text-gray-800 font-medium">Contraseña</Label>
               <Input
                 id="password"
                 name="password"
@@ -112,7 +112,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
                 minLength={6}
               />
               {showRegister && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-600">
                   Mínimo 6 caracteres
                 </p>
               )}
@@ -127,7 +127,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
             <Button 
               type="submit" 
               variant="login"
-              className="w-full" 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" 
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -139,7 +139,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
             <button
               type="button"
               onClick={onToggleMode}
-              className="text-sm text-muted-foreground hover:text-primary underline"
+              className="text-sm text-gray-600 hover:text-blue-600 underline font-medium"
               disabled={isLoading}
             >
               {showRegister 
