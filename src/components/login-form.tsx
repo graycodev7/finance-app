@@ -80,6 +80,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
                   onChange={handleInputChange}
                   required
                   disabled={isLoading}
+                  className="text-gray-900 placeholder:text-gray-500 bg-white border-gray-300"
                 />
               </div>
             )}
@@ -95,6 +96,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
+                className="text-gray-900 placeholder:text-gray-500 bg-white border-gray-300"
               />
             </div>
 
@@ -110,6 +112,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
                 required
                 disabled={isLoading}
                 minLength={6}
+                className="text-gray-900 placeholder:text-gray-500 bg-white border-gray-300"
               />
               {showRegister && (
                 <p className="text-xs text-gray-600">
@@ -127,7 +130,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
             <Button 
               type="submit" 
               variant="login"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" 
+              className="w-full bg-black hover:bg-gray-800 text-white font-medium" 
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
