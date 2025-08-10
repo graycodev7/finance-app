@@ -214,7 +214,13 @@ class ApiClient {
   async register(name: string, email: string, password: string): Promise<ApiResponse<LoginResponse>> {
     return this.request<LoginResponse>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ 
+        name, 
+        email, 
+        password,
+        currency: 'USD',
+        language: 'es'
+      }),
     });
   }
 
