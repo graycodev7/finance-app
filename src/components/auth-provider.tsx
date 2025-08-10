@@ -228,6 +228,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('Registration error:', error);
+      // If user was created but token generation failed, show specific message
+      if (error instanceof Error && error.message.includes('Internal server error')) {
+        throw new Error('Usuario registrado exitosamente, pero hubo un problema con el login automático. Intenta hacer login manualmente.');
+      }
       throw error;
     } finally {
       setIsLoading(false);
