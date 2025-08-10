@@ -65,7 +65,7 @@ export function AppSidebar() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-4 border-b border-slate-200/50">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md">
+            <div className="p-2 rounded-xl bg-black shadow-md">
               <ChartBar className="h-5 w-5 text-white" />
             </div>
             <span className="font-bold text-lg gradient-text">FinanceApp</span>
@@ -103,8 +103,8 @@ export function AppSidebar() {
             {/* User Info */}
             {user && (
               <div className="flex items-center gap-3 p-3 bg-white/50 backdrop-blur-sm rounded-xl">
-                <div className="p-2 rounded-xl bg-indigo-100">
-                  <User className="h-4 w-4 text-indigo-600" />
+                <div className="p-2 rounded-xl bg-gray-100">
+                  <User className="h-4 w-4 text-gray-600" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-900 truncate">{user.name}</p>
@@ -116,7 +116,7 @@ export function AppSidebar() {
             {/* Calculator Button */}
             <Button 
               onClick={() => setCalculatorOpen(true)} 
-              className="w-full modern-button border-0 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 h-12 font-semibold"
+              className="w-full modern-button border-0 bg-black text-white hover:bg-gray-800 h-12 font-semibold"
             >
               <Calculator className="h-4 w-4 mr-2" />
               Calculadora

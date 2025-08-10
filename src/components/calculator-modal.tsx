@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -143,6 +144,9 @@ export function CalculatorModal({ open, onOpenChange }: CalculatorModalProps) {
             </div>
             Calculadora
           </DialogTitle>
+          <DialogDescription className="text-slate-600 dark:text-slate-400">
+            Realiza cálculos rápidos para tus transacciones financieras
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">

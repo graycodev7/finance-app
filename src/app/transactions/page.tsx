@@ -52,9 +52,13 @@ export default function TransactionsPage() {
       return
     }
 
+    // Ensure amount is a valid number
+    const parsedAmount = Number.parseFloat(formData.amount);
+    const validAmount = isNaN(parsedAmount) ? 0 : parsedAmount;
+
     addTransaction({
       type: formData.type,
-      amount: Number.parseFloat(formData.amount),
+      amount: validAmount,
       description: formData.description,
       category: formData.category,
       date: formData.date,
@@ -116,8 +120,8 @@ export default function TransactionsPage() {
                 {/* Tipo de transacción */}
                 <div className="space-y-2">
                   <Label htmlFor="type" className="text-blue-900 font-medium">Tipo de Transacción *</Label>
-                  <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
-                    <SelectTrigger className="modern-input border-0 bg-white/80 backdrop-blur-sm">
+                  <Select name="type" value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
+                    <SelectTrigger id="type" className="modern-input border-0 bg-white/80 backdrop-blur-sm">
                       <SelectValue placeholder="Selecciona el tipo" />
                     </SelectTrigger>
                     <SelectContent className="glass-card border-0">
@@ -134,9 +138,11 @@ export default function TransactionsPage() {
                     <DollarSign className="absolute left-3 top-3 h-4 w-4 text-blue-600/70" />
                     <Input
                       id="amount"
+                      name="amount"
                       type="number"
                       step="0.01"
                       placeholder="0.00"
+                      autoComplete="transaction-amount"
                       value={formData.amount}
                       onChange={(e) => handleInputChange("amount", e.target.value)}
                       className="pl-10 modern-input border-0 bg-white/80 backdrop-blur-sm"
@@ -150,7 +156,9 @@ export default function TransactionsPage() {
                   <Label htmlFor="description" className="text-blue-900 font-medium">Descripción *</Label>
                   <Input
                     id="description"
+                    name="description"
                     placeholder="Ej: Compra en supermercado"
+                    autoComplete="off"
                     value={formData.description}
                     onChange={(e) => handleInputChange("description", e.target.value)}
                     className="modern-input border-0 bg-white/80 backdrop-blur-sm"
@@ -161,8 +169,8 @@ export default function TransactionsPage() {
                 {/* Categoría */}
                 <div className="space-y-2">
                   <Label htmlFor="category" className="text-blue-900 font-medium">Categoría *</Label>
-                  <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                    <SelectTrigger className="modern-input border-0 bg-white/80 backdrop-blur-sm">
+                  <Select name="category" value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                    <SelectTrigger id="category" className="modern-input border-0 bg-white/80 backdrop-blur-sm">
                       <SelectValue placeholder="Selecciona una categoría" />
                     </SelectTrigger>
                     <SelectContent className="glass-card border-0">
@@ -182,7 +190,9 @@ export default function TransactionsPage() {
                     <CalendarIcon className="absolute left-3 top-3 h-4 w-4 text-blue-600/70" />
                     <Input
                       id="date"
+                      name="date"
                       type="date"
+                      autoComplete="transaction-date"
                       value={formData.date}
                       onChange={(e) => handleInputChange("date", e.target.value)}
                       className="pl-10 modern-input border-0 bg-white/80 backdrop-blur-sm"
@@ -195,7 +205,9 @@ export default function TransactionsPage() {
                   <Label htmlFor="notes" className="text-blue-900 font-medium">Notas (opcional)</Label>
                   <Textarea
                     id="notes"
+                    name="notes"
                     placeholder="Información adicional..."
+                    autoComplete="off"
                     value={formData.notes}
                     onChange={(e) => handleInputChange("notes", e.target.value)}
                     rows={3}

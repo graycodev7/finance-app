@@ -106,7 +106,7 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center space-x-2">
           <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
-            <SelectTrigger className="w-full sm:w-[180px] border-0 bg-white/80 backdrop-blur-sm shadow-lg shadow-slate-200/50 rounded-2xl">
+            <SelectTrigger id="period-filter" name="period-filter" className="w-full sm:w-[180px] border-0 bg-white/80 backdrop-blur-sm shadow-lg shadow-slate-200/50 rounded-2xl">
               <SelectValue placeholder="Seleccionar período" />
             </SelectTrigger>
             <SelectContent className="border-0 shadow-2xl rounded-2xl bg-white/95 backdrop-blur-md">
@@ -258,7 +258,7 @@ export default function Dashboard() {
                   <h4 className="font-semibold text-slate-800">Mayor categoría de gasto:</h4>
                   <p className="text-sm text-slate-600">
                     {topExpenseCategory
-                      ? `${topExpenseCategory.category} representa el ${topExpenseCategory.percentage.toFixed(1)}% de tus gastos ($${topExpenseCategory.amount.toLocaleString()})`
+                      ? `${topExpenseCategory.category} representa el ${topExpenseCategory.percentage.toFixed(1)}% de tus gastos (${formatAmount(topExpenseCategory.amount)})`
                       : "No hay datos suficientes"}
                   </p>
                 </div>
@@ -310,7 +310,7 @@ export default function Dashboard() {
                       <span className="text-sm font-medium text-slate-800">{category.category}</span>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-bold text-slate-900">${category.amount.toLocaleString()}</div>
+                      <div className="text-sm font-bold text-slate-900">{formatAmount(category.amount)}</div>
                       <div className="text-xs text-slate-500">{category.percentage.toFixed(1)}%</div>
                     </div>
                   </div>

@@ -2,8 +2,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { memo, useMemo } from "react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import type { Transaction } from "@/components/transaction-provider";
+import { ArrowUpIcon, ArrowDownIcon } from "lucide-react"
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area } from "recharts"
+import { Transaction } from "./transaction-provider"
+import { useCurrency } from "./currency-provider";
 
 interface DashboardChartsProps {
   transactions: Transaction[];
@@ -20,7 +22,7 @@ const CHART_COLORS = {
     "#2563eb", // Azul suave
     "#d97706", // Amber suave
     "#dc2626", // Rojo suave
-    "#7c3aed", // Violeta suave
+    "#374151", // Gris oscuro
     "#0891b2", // Cyan suave
     "#65a30d", // Lime suave
     "#ea580c", // Orange suave
@@ -28,18 +30,32 @@ const CHART_COLORS = {
 } as const;
 
 export const DashboardCharts = memo(function DashboardCharts({ transactions, monthlyData, topCategories }: DashboardChartsProps) {
+  const { formatAmount } = useCurrency();
+  
   // Memoizar cálculos costosos para evitar recálculos innecesarios
   const { totalIncome, totalExpenses, pieData } = useMemo(() => {
-    const income = transactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
-    const expenses = transactions.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
+    const income = transactions.filter((t) => t.type === "income").reduce((sum, t) => {
+      const amount = Number(t.amount);
+      return sum + (isNaN(amount) ? 0 : amount);
+    }, 0);
+    const expenses = transactions.filter((t) => t.type === "expense").reduce((sum, t) => {
+      const amount = Number(t.amount);
+      return sum + (isNaN(amount) ? 0 : amount);
+    }, 0);
+    
+    // Para el gráfico de pastel, solo mostrar datos si hay valores significativos
+    const pieData = [];
+    if (income > 0) {
+      pieData.push({ name: "Ingresos", value: income, color: CHART_COLORS.income });
+    }
+    if (expenses > 0) {
+      pieData.push({ name: "Gastos", value: expenses, color: CHART_COLORS.expense });
+    }
     
     return {
       totalIncome: income,
       totalExpenses: expenses,
-      pieData: [
-        { name: "Ingresos", value: income, color: CHART_COLORS.income },
-        { name: "Gastos", value: expenses, color: CHART_COLORS.expense },
-      ]
+      pieData
     };
   }, [transactions]);
 
@@ -60,7 +76,7 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
       {monthlyData.length > 0 && (
         <div className="col-span-full lg:col-span-2 glass-card p-6 relative overflow-hidden">
           {/* Gradiente de fondo decorativo más sutil */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/20 via-blue-50/10 to-purple-50/20 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/20 via-blue-50/10 to-gray-50/20 pointer-events-none" />
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-200/20 to-transparent rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-red-200/20 to-transparent rounded-full blur-2xl" />
           
@@ -142,7 +158,7 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
                 
                 <Tooltip
                   formatter={(value, name) => [
-                    `$${Number(value).toLocaleString()}`, 
+                    formatAmount(Number(value)), 
                     name === "ingresos" ? "💰 Ingresos" : "💸 Gastos"
                   ]}
                   labelFormatter={(label) => `📅 ${label}`}
@@ -203,17 +219,17 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
         </div>
       )}
 
-      {/* Gráfico de pastel modernizado - Distribución Ingresos vs Gastos */}
-      <div className="glass-card p-8 relative overflow-hidden">
-        {/* Fondo decorativo */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/30 via-white/20 to-blue-50/30 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-emerald-200/30 to-transparent rounded-full blur-2xl" />
-        <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-red-200/30 to-transparent rounded-full blur-xl" />
+      {/* Gráfico de distribución mejorado - Ingresos vs Gastos */}
+      <div className="glass-card p-6 relative overflow-hidden">
+        {/* Gradiente de fondo decorativo */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-pink-50/30 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-200/30 to-transparent rounded-full blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-purple-200/30 to-transparent rounded-full blur-2xl" />
         
         <div className="relative z-10">
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full" />
+              <div className="w-1 h-8 bg-gradient-to-b from-blue-400 to-purple-600 rounded-full" />
               <div>
                 <h3 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                   Distribución General
@@ -223,79 +239,108 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
             </div>
           </div>
           
-          <div className="flex justify-center">
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <defs>
-                  {/* Gradientes para el pie chart */}
-                  <linearGradient id="incomeSlice" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#10b981" />
-                    <stop offset="100%" stopColor="#059669" />
-                  </linearGradient>
-                  <linearGradient id="expenseSlice" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" />
-                    <stop offset="100%" stopColor="#dc2626" />
-                  </linearGradient>
-                  
-                  {/* Sombra para el pie chart */}
-                  <filter id="pieShadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="#000000" floodOpacity="0.15"/>
-                  </filter>
-                </defs>
-                
-                <Pie 
-                  data={[
-                    { ...pieData[0], fill: "url(#incomeSlice)" },
-                    { ...pieData[1], fill: "url(#expenseSlice)" }
-                  ]} 
-                  cx="50%" 
-                  cy="50%" 
-                  innerRadius={75} 
-                  outerRadius={120} 
-                  paddingAngle={8} 
-                  dataKey="value"
-                  filter="url(#pieShadow)"
-                  stroke="rgba(255,255,255,0.8)"
-                  strokeWidth={3}
-                />
-                <Tooltip 
-                  formatter={(value, name) => [`$${Number(value).toLocaleString()}`, name]}
-                  contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-                    border: 'none',
-                    borderRadius: '16px',
-                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
-                    backdropFilter: 'blur(16px)',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    padding: '16px 20px'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          
-          {/* Leyenda modernizada */}
-          <div className="flex justify-center gap-8 mt-6">
-            {pieData.map((entry, index) => (
-              <div key={index} className="flex items-center gap-3 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-white/30">
-                <div 
-                  className="w-4 h-4 rounded-full shadow-sm border-2 border-white/50" 
-                  style={{ 
-                    background: index === 0 
-                      ? 'linear-gradient(135deg, #10b981, #059669)' 
-                      : 'linear-gradient(135deg, #ef4444, #dc2626)'
-                  }} 
-                />
-                <div className="text-center">
-                  <div className="text-sm font-semibold text-slate-800">{entry.name}</div>
-                  <div className="text-xs text-slate-600 font-medium">
-                    {totalIncome + totalExpenses > 0 ? ((entry.value / (totalIncome + totalExpenses)) * 100).toFixed(1) : 0}%
+          {/* Mostrar solo si hay datos significativos para ambos */}
+          {pieData.length > 1 ? (
+            <>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      innerRadius={50}
+                      paddingAngle={4}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.color}
+                          style={{
+                            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
+                            transition: 'all 0.3s ease'
+                          }}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value, name) => [formatAmount(Number(value)), name]}
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        border: 'none',
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
+                        backdropFilter: 'blur(16px)',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        padding: '16px 20px'
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Leyenda modernizada */}
+              <div className="flex justify-center gap-8 mt-6">
+                {pieData.map((entry, index) => (
+                  <div key={index} className="flex items-center gap-3 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-white/30">
+                    <div 
+                      className="w-4 h-4 rounded-full shadow-sm border-2 border-white/50" 
+                      style={{ 
+                        background: entry.name === 'Ingresos'
+                          ? 'linear-gradient(135deg, #10b981, #059669)' 
+                          : 'linear-gradient(135deg, #ef4444, #dc2626)'
+                      }} 
+                    />
+                    <div className="text-center">
+                      <div className="text-sm font-semibold text-slate-800">{entry.name}</div>
+                      <div className="text-xs text-slate-600 font-medium">
+                        {totalIncome + totalExpenses > 0 ? ((entry.value / (totalIncome + totalExpenses)) * 100).toFixed(1) : 0}%
+                      </div>
+                      <div className="text-xs text-slate-500 font-medium mt-1">
+                        {formatAmount(entry.value)}
+                      </div>
+                    </div>
                   </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            /* Vista alternativa para datos desproporcionados */
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-emerald-50/80 p-6 rounded-2xl border border-emerald-100/50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+                    <span className="text-sm font-semibold text-emerald-800">Ingresos</span>
+                  </div>
+                  <div className="text-2xl font-bold text-emerald-900">{formatAmount(totalIncome)}</div>
+                  <div className="text-xs text-emerald-600 mt-1">Total acumulado</div>
+                </div>
+                
+                <div className="bg-red-50/80 p-6 rounded-2xl border border-red-100/50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-r from-red-400 to-red-600"></div>
+                    <span className="text-sm font-semibold text-red-800">Gastos</span>
+                  </div>
+                  <div className="text-2xl font-bold text-red-900">{formatAmount(totalExpenses)}</div>
+                  <div className="text-xs text-red-600 mt-1">Total acumulado</div>
                 </div>
               </div>
-            ))}
-          </div>
+              
+              <div className="bg-blue-50/80 p-6 rounded-2xl border border-blue-100/50">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                  <span className="text-sm font-semibold text-blue-800">Balance Neto</span>
+                </div>
+                <div className="text-3xl font-bold text-blue-900">{formatAmount(totalIncome - totalExpenses)}</div>
+                <div className="text-xs text-blue-600 mt-1">Diferencia entre ingresos y gastos</div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -304,7 +349,7 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
         <div className="col-span-full glass-card p-8">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-1 h-8 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full" />
+              <div className="w-1 h-8 bg-gradient-to-b from-gray-400 to-gray-600 rounded-full" />
               <div>
                 <h3 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                   Top Categorías de Gastos
@@ -325,7 +370,7 @@ export const DashboardCharts = memo(function DashboardCharts({ transactions, mon
                     <span className="text-sm font-bold text-slate-800">{category.category}</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-xl font-bold text-slate-900">${category.amount.toLocaleString()}</div>
+                    <div className="text-xl font-bold text-slate-900">{formatAmount(category.amount)}</div>
                     <div className="text-xs text-slate-500 font-semibold bg-slate-100/60 px-2 py-1 rounded-full mt-1">
                       {category.percentage.toFixed(1)}%
                     </div>

@@ -38,10 +38,14 @@ const TransactionContext = createContext<TransactionContextType | undefined>(und
 
 // Helper function to convert API transaction to frontend format
 function convertApiTransaction(apiTransaction: ApiTransaction): Transaction {
+  // Ensure amount is a valid number
+  const amount = Number(apiTransaction.amount);
+  const validAmount = isNaN(amount) ? 0 : amount;
+  
   return {
-    id: apiTransaction.id.toString(),
+    id: String(apiTransaction.id), // Ensure no leading zeros
     type: apiTransaction.type,
-    amount: apiTransaction.amount,
+    amount: validAmount,
     description: apiTransaction.description,
     category: apiTransaction.category,
     date: apiTransaction.date,
@@ -203,11 +207,21 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
   }, [transactions]);
 
   const getTotalIncome = useCallback(() => {
-    return transactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
+    return transactions
+      .filter((t) => t.type === "income")
+      .reduce((sum, t) => {
+        const amount = Number(t.amount);
+        return sum + (isNaN(amount) ? 0 : amount);
+      }, 0);
   }, [transactions]);
 
   const getTotalExpenses = useCallback(() => {
-    return transactions.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
+    return transactions
+      .filter((t) => t.type === "expense")
+      .reduce((sum, t) => {
+        const amount = Number(t.amount);
+        return sum + (isNaN(amount) ? 0 : amount);
+      }, 0);
   }, [transactions]);
 
   const getBalance = useCallback(() => {
@@ -219,7 +233,9 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
     const categoryTotals: { [key: string]: number } = {};
 
     expenses.forEach((expense) => {
-      categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amount;
+      const amount = Number(expense.amount);
+      const validAmount = isNaN(amount) ? 0 : amount;
+      categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + validAmount;
     });
 
     return categoryTotals;
@@ -236,10 +252,13 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
         monthlyData[monthKey] = { ingresos: 0, gastos: 0 };
       }
 
+      const amount = Number(transaction.amount);
+      const validAmount = isNaN(amount) ? 0 : amount;
+      
       if (transaction.type === "income") {
-        monthlyData[monthKey].ingresos += transaction.amount;
+        monthlyData[monthKey].ingresos += validAmount;
       } else {
-        monthlyData[monthKey].gastos += transaction.amount;
+        monthlyData[monthKey].gastos += validAmount;
       }
     });
 

@@ -3,11 +3,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient, type LoginResponse } from '@/lib/api';
+import { StorageService } from '@/lib/storage';
 
 interface User {
   id: number;
   email: string;
   name: string;
+  currency?: string;
+  language?: string;
+  email_notifications?: boolean;
+  push_notifications?: boolean;
+  weekly_reports?: boolean;
+  budget_alerts?: boolean;
 }
 
 interface AuthContextType {
@@ -20,6 +27,7 @@ interface AuthContextType {
   logout: () => void;
   refreshToken: () => Promise<void>;
   getSessions: () => Promise<any[]>;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -238,10 +246,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const getSessions = async () => {
     try {
-      const response = await apiClient.getSessions();
-      return response.data?.sessions || [];
+      // TODO: Implement getSessions in apiClient
+      // const response = await apiClient.getSessions();
+      // return response.data?.sessions || [];
+      return [];
     } catch (error) {
       return [];
+    }
+  };
+
+  const updateUser = (userData: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+      // Update localStorage to keep data in sync after saving to database
+      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
     }
   };
 
@@ -255,6 +274,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     refreshToken,
     getSessions,
+    updateUser,
   };
 
   return (

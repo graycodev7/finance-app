@@ -163,9 +163,9 @@ export function ReportsSection() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Período del reporte:</label>
+              <label htmlFor="report-period" className="text-sm font-medium">Período del reporte:</label>
               <Select value={reportPeriod} onValueChange={setReportPeriod}>
-                <SelectTrigger>
+                <SelectTrigger id="report-period" name="report-period">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

@@ -1,6 +1,7 @@
 import { ArrowDownIcon, ArrowUpIcon, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Transaction } from "@/components/transaction-provider"
+import { useCurrency } from "@/components/currency-provider"
 import { memo, useCallback, useMemo } from "react"
 import {
   AlertDialog,
@@ -21,6 +22,8 @@ interface TransactionItemProps {
 }
 
 export const TransactionItem = memo(function TransactionItem({ transaction, onDelete, showDeleteButton = false }: TransactionItemProps) {
+  const { formatAmount } = useCurrency();
+  
   // Memoizar el callback de eliminación
   const handleDelete = useCallback(() => {
     if (onDelete) {
@@ -73,7 +76,7 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
               : "text-rose-700 bg-rose-50/80"
           }`}
         >
-          {transaction.type === "income" ? "+" : "-"}${transaction.amount.toLocaleString()}
+          {transaction.type === "income" ? "+" : "-"}{formatAmount(transaction.amount).replace(/^[^\d-]*/, '')}
         </div>
 
         {showDeleteButton && onDelete && (

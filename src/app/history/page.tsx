@@ -68,14 +68,14 @@ export default function HistoryPage() {
       </div>
 
       {/* Filtros y búsqueda */}
-      <div className="card-purple p-3 sm:p-4 lg:p-5">
+      <div className="card-black p-3 sm:p-4 lg:p-5">
         <div className="mb-6">
-          <h3 className="text-xl font-bold text-purple-900 mb-2">Filtros y Búsqueda</h3>
-          <p className="text-sm text-purple-700/70">Encuentra transacciones específicas usando los filtros</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Filtros y Búsqueda</h3>
+          <p className="text-sm text-gray-700/70">Encuentra transacciones específicas usando los filtros</p>
         </div>
         <div className="grid gap-3 md:grid-cols-4">
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-purple-600/70" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-600/70" />
             <Input
               placeholder="Buscar por descripción..."
               value={searchTerm}
@@ -85,7 +85,7 @@ export default function HistoryPage() {
           </div>
 
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="modern-input border-0 bg-white/80 backdrop-blur-sm">
+            <SelectTrigger id="filter-type" name="filter-type" className="modern-input border-0 bg-white/80 backdrop-blur-sm">
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent className="glass-card border-0">
@@ -96,7 +96,7 @@ export default function HistoryPage() {
           </Select>
 
           <Select value={filterCategory} onValueChange={setFilterCategory}>
-            <SelectTrigger className="modern-input border-0 bg-white/80 backdrop-blur-sm">
+            <SelectTrigger id="filter-category" name="filter-category" className="modern-input border-0 bg-white/80 backdrop-blur-sm">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent className="glass-card border-0">
@@ -111,7 +111,7 @@ export default function HistoryPage() {
 
           <Button 
             onClick={handleExportCSV} 
-            className="modern-button border-0 bg-white/80 backdrop-blur-sm hover:bg-white/90 text-purple-700 hover:text-purple-800"
+            className="modern-button border-0 bg-white/80 backdrop-blur-sm hover:bg-white/90 text-gray-700 hover:text-gray-800"
           >
             <Download className="h-4 w-4 mr-2" />
             Exportar CSV

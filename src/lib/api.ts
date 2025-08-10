@@ -1,4 +1,6 @@
 // API Client for Backend Communication
+import { StorageService } from './storage';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 interface ApiResponse<T> {
@@ -48,62 +50,46 @@ class ApiClient {
     reject: (error: any) => void;
   }> = [];
 
-  private getAuthHeaders(): HeadersInit {
-    // Try new token format first, fallback to old format
-    const accessToken = localStorage.getItem('access_token');
-    const oldToken = localStorage.getItem('auth_token');
-    const token = accessToken || oldToken;
+  private getAuthHeaders(): Record<string, string> {
+    const token = StorageService.getAccessToken();
     
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` }),
-    };
+    // Validar que el token existe y no está corrupto
+    if (!token || token === 'undefined' || token === 'null' || token.length < 10) {
+      return {};
+    }
+    
+    return { 'Authorization': `Bearer ${token}` };
   }
 
   private async refreshAccessToken(): Promise<string> {
-    const refreshToken = localStorage.getItem('refresh_token');
+    const refreshToken = StorageService.getRefreshToken();
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${refreshToken}`,
-        },
-      });
+    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
 
-      if (!response.ok) {
-        throw new Error('Token refresh failed');
-      }
-
-      const data = await response.json();
-      if (data.success && data.data) {
-        const { accessToken, refreshToken: newRefreshToken } = data.data;
-        
-        // Update stored tokens
-        localStorage.setItem('access_token', accessToken);
-        if (newRefreshToken) {
-          localStorage.setItem('refresh_token', newRefreshToken);
-        }
-        
-        return accessToken;
-      } else {
-        throw new Error('Invalid refresh response');
-      }
-    } catch (error) {
-      // Clear tokens on refresh failure
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('auth_user');
-      throw error;
+    if (!response.ok) {
+      throw new Error('Failed to refresh token');
     }
+
+    const data = await response.json();
+    const newAccessToken = data.data?.accessToken || data.data?.token;
+    
+    if (newAccessToken) {
+      StorageService.setTokens(newAccessToken, data.data?.refreshToken);
+    }
+
+    return newAccessToken;
   }
 
-  private processQueue(error: any, token: string | null = null) {
+  private processQueue(error: any, token: string | null) {
     this.failedQueue.forEach(({ resolve, reject }) => {
       if (error) {
         reject(error);
@@ -125,32 +111,17 @@ class ApiClient {
       const response = await fetch(fullUrl, {
         ...options,
         headers: {
+          'Content-Type': 'application/json',
           ...this.getAuthHeaders(),
           ...options.headers,
         },
       });
 
-      // Handle 401 Unauthorized - token might be expired
-      if (response.status === 401 && !endpoint.includes('/auth/')) {
-        const refreshToken = localStorage.getItem('refresh_token');
+      // Handle 401/403 Unauthorized - token might be expired
+      if ((response.status === 401 || response.status === 403) && !endpoint.includes('/auth/')) {
+        const refreshToken = StorageService.getRefreshToken();
         
         if (refreshToken && !this.isRefreshing) {
-          if (this.isRefreshing) {
-            // If already refreshing, queue this request
-            return new Promise((resolve, reject) => {
-              this.failedQueue.push({ resolve: (token: string) => {
-                // Retry original request with new token
-                this.request<T>(endpoint, {
-                  ...options,
-                  headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${token}`,
-                  },
-                }).then(resolve).catch(reject);
-              }, reject });
-            });
-          }
-
           this.isRefreshing = true;
 
           try {
@@ -161,22 +132,42 @@ class ApiClient {
             return this.request<T>(endpoint, {
               ...options,
               headers: {
+                'Content-Type': 'application/json',
                 ...options.headers,
                 'Authorization': `Bearer ${newToken}`,
               },
             });
           } catch (refreshError) {
             this.processQueue(refreshError, null);
-            // Redirect to login or handle auth failure
+            // Clear tokens and redirect to login
+            StorageService.clearAuth();
             window.location.href = '/auth';
-            throw refreshError;
+            throw new Error('Session expired. Please login again.');
           } finally {
             this.isRefreshing = false;
           }
+        } else if (refreshToken && this.isRefreshing) {
+          // If already refreshing, queue this request
+          return new Promise((resolve, reject) => {
+            this.failedQueue.push({ 
+              resolve: (token: string) => {
+                this.request<T>(endpoint, {
+                  ...options,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers,
+                    'Authorization': `Bearer ${token}`,
+                  },
+                }).then(resolve).catch(reject);
+              }, 
+              reject 
+            });
+          });
         } else {
-          // No refresh token, redirect to login
+          // No refresh token available, redirect to login
+          StorageService.clearAuth();
           window.location.href = '/auth';
-          throw new Error('Authentication required');
+          throw new Error('Session expired. Please login again.');
         }
       }
 
@@ -208,81 +199,123 @@ class ApiClient {
   async register(name: string, email: string, password: string): Promise<ApiResponse<LoginResponse>> {
     return this.request<LoginResponse>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ email, name, password }),
     });
   }
 
-  async getProfile(): Promise<ApiResponse<{ user: LoginResponse['user'] }>> {
-    return this.request<{ user: LoginResponse['user'] }>('/auth/profile');
-  }
+  async refreshToken(): Promise<ApiResponse<any>> {
+    const refreshToken = StorageService.getRefreshToken();
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
 
-  async logout(): Promise<ApiResponse<void>> {
-    return this.request<void>('/auth/logout', {
+    return this.request<any>('/auth/refresh', {
       method: 'POST',
+      body: JSON.stringify({ refreshToken }),
     });
   }
 
-  async getSessions(): Promise<ApiResponse<{ sessions: any[] }>> {
-    return this.request<{ sessions: any[] }>('/auth/sessions');
-  }
-
-  async refreshToken(): Promise<ApiResponse<{ accessToken: string; refreshToken?: string }>> {
-    const refreshToken = localStorage.getItem('refresh_token');
-    return this.request<{ accessToken: string; refreshToken?: string }>('/auth/refresh', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${refreshToken}`,
-      },
-    });
+  async logout(): Promise<ApiResponse<any>> {
+    const refreshToken = StorageService.getRefreshToken();
+    try {
+      return await this.request<any>('/auth/logout', {
+        method: 'POST',
+        body: JSON.stringify({ refreshToken }),
+      });
+    } finally {
+      // Always clear local storage, even if the request fails
+      StorageService.clearAuth();
+    }
   }
 
   // Transaction endpoints
-  async getTransactions(limit?: number, offset?: number): Promise<ApiResponse<{ transactions: Transaction[] }>> {
-    const params = new URLSearchParams();
-    if (limit) params.append('limit', limit.toString());
-    if (offset) params.append('offset', offset.toString());
-    
-    const query = params.toString() ? `?${params.toString()}` : '';
-    return this.request<{ transactions: Transaction[] }>(`/transactions${query}`);
+  async getTransactions(): Promise<ApiResponse<{ transactions: Transaction[] }>> {
+    return this.request<{ transactions: Transaction[] }>('/transactions');
   }
 
-  async createTransaction(transaction: {
-    type: 'income' | 'expense';
-    amount: number;
-    category: string;
-    description: string;
-    date: string;
-  }): Promise<ApiResponse<{ transaction: Transaction }>> {
+  async createTransaction(transaction: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<{ transaction: Transaction }>> {
     return this.request<{ transaction: Transaction }>('/transactions', {
       method: 'POST',
       body: JSON.stringify(transaction),
     });
   }
 
-  async updateTransaction(
-    id: number,
-    transaction: Partial<{
-      type: 'income' | 'expense';
-      amount: number;
-      category: string;
-      description: string;
-      date: string;
-    }>
-  ): Promise<ApiResponse<{ transaction: Transaction }>> {
+  async updateTransaction(id: number, transaction: Partial<Transaction>): Promise<ApiResponse<{ transaction: Transaction }>> {
     return this.request<{ transaction: Transaction }>(`/transactions/${id}`, {
       method: 'PUT',
       body: JSON.stringify(transaction),
     });
   }
 
-  async deleteTransaction(id: number): Promise<ApiResponse<void>> {
-    return this.request<void>(`/transactions/${id}`, {
+  async deleteTransaction(id: number): Promise<ApiResponse<any>> {
+    return this.request<any>(`/transactions/${id}`, {
       method: 'DELETE',
     });
   }
 
-  async getTransactionStats(): Promise<ApiResponse<{ stats: TransactionStats }>> {
-    return this.request<{ stats: TransactionStats }>('/transactions/stats');
+  async deleteAllTransactions(): Promise<ApiResponse<any>> {
+    return this.request<any>('/transactions/delete-all', {
+      method: 'DELETE',
+    });
+  }
+
+  async getTransactionStats(): Promise<ApiResponse<TransactionStats>> {
+    return this.request<TransactionStats>('/transactions/stats');
+  }
+
+  // Category endpoints
+  async getCategories(): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>('/categories');
+  }
+
+  async createCategory(category: { name: string; type: 'income' | 'expense' }): Promise<ApiResponse<any>> {
+    return this.request<any>('/categories', {
+      method: 'POST',
+      body: JSON.stringify(category),
+    });
+  }
+
+  async deleteCategory(id: number): Promise<ApiResponse<any>> {
+    return this.request<any>(`/categories/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // User endpoints
+  async getProfile(): Promise<ApiResponse<any>> {
+    return this.request<any>('/auth/profile');
+  }
+
+  async updateProfile(profileData: {
+    name?: string;
+    email?: string;
+  }): Promise<ApiResponse<any>> {
+    return this.request<any>('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  }
+
+  async updatePreferences(preferencesData: { 
+    currency?: string; 
+    language?: string; 
+    email_notifications?: boolean;
+    push_notifications?: boolean;
+    weekly_reports?: boolean;
+    budget_alerts?: boolean;
+  }): Promise<ApiResponse<any>> {
+    return this.request<any>('/auth/preferences', {
+      method: 'PUT',
+      body: JSON.stringify(preferencesData),
+    });
+  }
+
+
+
+  async deleteAllUserData(): Promise<ApiResponse<any>> {
+    return this.request<any>('/user/delete-all', {
+      method: 'DELETE',
+    });
   }
 }
 
@@ -290,4 +323,4 @@ class ApiClient {
 export const apiClient = new ApiClient();
 
 // Export types
-export type { Transaction, TransactionStats, LoginResponse, ApiResponse };
+export type { ApiResponse, LoginResponse, Transaction, TransactionStats };

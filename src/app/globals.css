@@ -477,7 +477,7 @@
   }
   
   .modern-nav-active {
-    @apply bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500;
+    @apply bg-gray-50 text-gray-700 border-l-4 border-gray-500;
   }
   
   /* Tema oscuro para navegación */
@@ -486,12 +486,17 @@
   }
   
   .dark .modern-nav-active {
-    @apply bg-indigo-900/50 text-indigo-300;
+    @apply bg-gray-900/50 text-gray-300;
   }
   
   /* Texto con gradiente */
   .gradient-text {
-    @apply bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent;
+    @apply bg-black bg-clip-text text-transparent;
+  }
+  
+  /* Card con tema negro */
+  .card-black {
+    @apply bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200/50 shadow-lg backdrop-blur-sm rounded-2xl;
   }
   
   /* Estilos para prevenir overflow horizontal en componentes específicos */

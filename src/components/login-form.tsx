@@ -75,7 +75,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
                   id="name"
                   name="name"
                   type="text"
-                  placeholder="Tu nombre completo"
+                  autoComplete="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   required
@@ -90,7 +90,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="tu@email.com"
+                autoComplete="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
@@ -104,7 +104,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="Tu contraseña"
+                autoComplete={showRegister ? "new-password" : "current-password"}
                 value={formData.password}
                 onChange={handleInputChange}
                 required
@@ -126,6 +126,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
 
             <Button 
               type="submit" 
+              variant="login"
               className="w-full" 
               disabled={isLoading}
             >
@@ -148,15 +149,7 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
             </button>
           </div>
 
-          {!showRegister && (
-            <div className="mt-4 p-3 bg-muted rounded-lg">
-              <p className="text-xs text-muted-foreground text-center">
-                <strong>Cuenta de prueba:</strong><br />
-                Email: test@example.com<br />
-                Contraseña: 123456
-              </p>
-            </div>
-          )}
+
         </CardContent>
       </Card>
     </div>

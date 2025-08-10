@@ -1,11 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./auth-provider";
+import { apiClient } from "@/lib/api";
 
+// Currency types and data
 export interface Currency {
   code: string;
-  symbol: string;
   name: string;
+  symbol: string;
   locale: string;
 }
 
@@ -41,44 +44,74 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [currency, setCurrencyState] = useState<Currency>(CURRENCIES[1]); // Default to PEN (Sol Peruano)
+  const { user } = useAuth();
 
-  // Load currency from localStorage on mount
-  useEffect(() => {
-    const savedCurrency = localStorage.getItem("finance-app-currency");
-    if (savedCurrency) {
-      try {
-        const parsedCurrency = JSON.parse(savedCurrency);
-        const foundCurrency = CURRENCIES.find(c => c.code === parsedCurrency.code);
-        if (foundCurrency) {
-          setCurrencyState(foundCurrency);
-        }
-      } catch (error) {
-        // If there's an error loading, keep the default
-      }
-    }
-  }, []);
+  // Currency will be set by the settings page when it loads user preferences
+  // This avoids multiple API calls and ensures consistency
 
-  // Save currency to localStorage when it changes
+  // Save currency to database when it changes
   const setCurrency = (newCurrency: Currency) => {
     setCurrencyState(newCurrency);
-    localStorage.setItem("finance-app-currency", JSON.stringify(newCurrency));
+    // Currency is saved to database via settings page - no direct API call needed here
+    // The settings page handles the updatePreferences call
   };
 
   // Format amount with currency symbol
   const formatAmount = (amount: number): string => {
-    const formatted = amount.toLocaleString(currency.locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-    return `${currency.symbol}${formatted}`;
+    try {
+      // Ensure amount is a valid number
+      const numAmount = Number(amount);
+      const validAmount = isNaN(numAmount) ? 0 : numAmount;
+      
+      // Use the currency's locale with proper formatting
+      const formatted = new Intl.NumberFormat(currency.locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      }).format(validAmount);
+      
+      return `${currency.symbol}${formatted}`;
+    } catch (error) {
+      // Fallback to en-US formatting if locale fails
+      console.warn(`Currency formatting failed for locale ${currency.locale}, using fallback`);
+      const numAmount = Number(amount);
+      const validAmount = isNaN(numAmount) ? 0 : numAmount;
+      
+      const formatted = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      }).format(validAmount);
+      
+      return `${currency.symbol}${formatted}`;
+    }
   };
 
   // Format amount without currency symbol (for internal calculations display)
   const formatAmountWithoutSymbol = (amount: number): string => {
-    return amount.toLocaleString(currency.locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+    try {
+      // Ensure amount is a valid number
+      const numAmount = Number(amount);
+      const validAmount = isNaN(numAmount) ? 0 : numAmount;
+      
+      // Use the currency's locale with proper formatting
+      return new Intl.NumberFormat(currency.locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      }).format(validAmount);
+    } catch (error) {
+      // Fallback to en-US formatting if locale fails
+      console.warn(`Currency formatting failed for locale ${currency.locale}, using fallback`);
+      const numAmount = Number(amount);
+      const validAmount = isNaN(numAmount) ? 0 : numAmount;
+      
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      }).format(validAmount);
+    }
   };
 
   const value = {
