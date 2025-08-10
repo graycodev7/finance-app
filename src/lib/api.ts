@@ -212,15 +212,20 @@ class ApiClient {
   }
 
   async register(name: string, email: string, password: string): Promise<ApiResponse<LoginResponse>> {
+    const requestData = { 
+      name, 
+      email, 
+      password,
+      currency: 'USD',
+      language: 'es'
+    };
+    
+    console.log('Sending registration request:', requestData);
+    console.log('Request URL:', `${API_BASE_URL}/auth/register`);
+    
     return this.request<LoginResponse>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ 
-        name, 
-        email, 
-        password,
-        currency: 'USD',
-        language: 'es'
-      }),
+      body: JSON.stringify(requestData),
     });
   }
 
