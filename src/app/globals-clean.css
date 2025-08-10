@@ -82,52 +82,6 @@
   }
 }
 
-/* Solo modo claro - Sin tema oscuro */
-@layer utilities {
-  /* Asegurar que siempre se use tema claro */
-  body {
-    background-color: rgb(248 250 252);
-    color: rgb(15 23 42);
-  }
-  
-  /* Forzar fondos claros en elementos principales */
-  .bg-background {
-    background-color: rgb(248 250 252) !important;
-  }
-  
-  .bg-card {
-    background-color: rgb(255 255 255) !important;
-  }
-  
-  .text-foreground {
-    color: rgb(15 23 42) !important;
-  }
-  
-  /* Inputs y formularios siempre claros */
-  input, textarea, select {
-    background-color: rgb(255 255 255) !important;
-    color: rgb(15 23 42) !important;
-    border-color: rgb(241 245 249) !important;
-  }
-  
-  input::placeholder, textarea::placeholder {
-    color: rgb(100 116 139) !important;
-  }
-  
-  /* Botones con colores claros */
-  .btn-primary {
-    background-color: rgb(99 102 241) !important;
-    color: rgb(255 255 255) !important;
-  }
-  
-  /* Sidebar siempre claro */
-  .sidebar {
-    background-color: rgb(255 255 255) !important;
-    color: rgb(15 23 42) !important;
-    border-color: rgb(241 245 249) !important;
-  }
-}
-
 /* Componentes específicos */
 .responsive-card {
   @apply bg-white border border-slate-200 rounded-lg p-6 shadow-sm;
