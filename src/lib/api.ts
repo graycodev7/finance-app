@@ -1,7 +1,7 @@
 // API Client for Backend Communication
 import { StorageService } from './storage';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://finance-app-backend-drab.vercel.app/api';
 
 interface ApiResponse<T> {
   success: boolean;
