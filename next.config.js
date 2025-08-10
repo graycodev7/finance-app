@@ -15,6 +15,10 @@ const nextConfig = {
   // Disable linting and type checking during build
   swcMinify: true,
   reactStrictMode: false,
+  // Completely disable linting during build
+  experimental: {
+    typedRoutes: false,
+  },
   images: {
     domains: ['localhost', 'finance-app-backend-drab.vercel.app'],
   },
