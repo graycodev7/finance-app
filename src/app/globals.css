@@ -133,6 +133,35 @@
   @apply bg-white border border-slate-200 rounded-lg p-6 shadow-sm;
 }
 
+/* Grid responsivo para dashboard - CRÍTICO para el diseño */
+.responsive-grid {
+  @apply grid gap-4;
+}
+
+/* Contenedor principal responsivo */
+.responsive-container {
+  @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
+}
+
+/* Cards con colores específicos */
+.card-blue {
+  @apply bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200;
+}
+
+.card-slate {
+  @apply bg-gradient-to-br from-slate-50 to-slate-100 border-slate-200;
+}
+
+/* Botón moderno */
+.modern-button {
+  @apply rounded-xl transition-all duration-200 hover:shadow-lg;
+}
+
+/* Main content con espaciado correcto */
+.main-content {
+  @apply space-y-6;
+}
+
 .glass-card {
   @apply bg-white/80 backdrop-blur-sm border border-slate-200 rounded-lg p-6;
 }
