@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DashboardCharts } from "@/components/dashboard-charts"
 import { ReportsSection } from "@/components/reports-section"
 import { ArrowDownIcon, ArrowUpIcon, Wallet, AlertTriangle, Target } from "lucide-react"

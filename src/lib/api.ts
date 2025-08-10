@@ -43,6 +43,21 @@ interface TransactionStats {
   expenseCount: number;
 }
 
+interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface TransactionData {
+  type: 'income' | 'expense';
+  amount: number;
+  category: string;
+  description: string;
+  date: string;
+  notes?: string;
+}
+
 class ApiClient {
   private isRefreshing = false;
   private failedQueue: Array<{
@@ -196,10 +211,10 @@ class ApiClient {
     });
   }
 
-  async register(name: string, email: string, password: string): Promise<ApiResponse<LoginResponse>> {
+  async register(userData: RegisterData): Promise<ApiResponse<LoginResponse>> {
     return this.request<LoginResponse>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ email, name, password }),
+      body: JSON.stringify(userData),
     });
   }
 
@@ -229,15 +244,19 @@ class ApiClient {
   }
 
   // Transaction endpoints
-  async getTransactions(): Promise<ApiResponse<{ transactions: Transaction[] }>> {
-    return this.request<{ transactions: Transaction[] }>('/transactions');
+  async getTransactions(): Promise<ApiResponse<Transaction[]>> {
+    return this.request<Transaction[]>('/transactions');
   }
 
-  async createTransaction(transaction: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<{ transaction: Transaction }>> {
-    return this.request<{ transaction: Transaction }>('/transactions', {
+  async addTransaction(transactionData: TransactionData): Promise<ApiResponse<Transaction>> {
+    return this.request<Transaction>('/transactions', {
       method: 'POST',
-      body: JSON.stringify(transaction),
+      body: JSON.stringify(transactionData),
     });
+  }
+
+  async makeRequest(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<unknown>> {
+    return this.request<unknown>(endpoint, options);
   }
 
   async updateTransaction(id: number, transaction: Partial<Transaction>): Promise<ApiResponse<{ transaction: Transaction }>> {
@@ -309,8 +328,6 @@ class ApiClient {
       body: JSON.stringify(preferencesData),
     });
   }
-
-
 
   async deleteAllUserData(): Promise<ApiResponse<any>> {
     return this.request<any>('/user/delete-all', {

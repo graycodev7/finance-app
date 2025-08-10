@@ -6,6 +6,7 @@ import { ArrowUpIcon, ArrowDownIcon } from "lucide-react"
 import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area } from "recharts"
 import { Transaction } from "./transaction-provider"
 import { useCurrency } from "./currency-provider";
+import { Badge } from "@/components/ui/badge";
 
 interface DashboardChartsProps {
   transactions: Transaction[];
