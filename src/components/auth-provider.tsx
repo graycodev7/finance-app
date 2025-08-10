@@ -190,6 +190,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
       const response = await apiClient.register(name, email, password);
+      
+      // Debug: Log the response to see what the backend returns
+      console.log('Register response:', response);
 
       if (response.success && response.data) {
         const { user: userData, token, accessToken, refreshToken } = response.data;
@@ -220,9 +223,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setupTokenRefresh();
         }
       } else {
+        console.error('Registration failed - Invalid response:', response);
         throw new Error(response.message || 'Registration failed');
       }
     } catch (error) {
+      console.error('Registration error:', error);
       throw error;
     } finally {
       setIsLoading(false);
