@@ -4,5 +4,5 @@
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
-  "alias": ["finance-app-frontend.vercel.app"]
+  "alias": ["graycodev-finance-app.vercel.app"]
 }
