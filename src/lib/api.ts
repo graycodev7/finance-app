@@ -211,10 +211,10 @@ class ApiClient {
     });
   }
 
-  async register(userData: RegisterData): Promise<ApiResponse<LoginResponse>> {
+  async register(name: string, email: string, password: string): Promise<ApiResponse<LoginResponse>> {
     return this.request<LoginResponse>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(userData),
+      body: JSON.stringify({ name, email, password }),
     });
   }
 
