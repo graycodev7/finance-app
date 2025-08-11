@@ -167,9 +167,18 @@
   @apply bg-white text-slate-900 border-slate-300;
 }
 
-/* Reducir espaciado en selects del historial */
+/* Reducir espaciado en selects - aplicar a todos los selects */
 .compact-select {
   @apply py-2 h-10;
+}
+
+/* Reducir espaciado en elementos del dropdown */
+.compact-select-content {
+  @apply py-1;
+}
+
+.compact-select-item {
+  @apply py-1.5 px-3 text-sm min-h-0;
 }
 
 /* Unificar colores de texto */

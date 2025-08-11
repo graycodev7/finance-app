@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient, type LoginResponse } from '@/lib/api';
 import { StorageService } from '@/lib/storage';
+import { tokenManager } from '@/lib/token-manager';
 
 interface User {
   id: number;
@@ -89,17 +90,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(tokenRefreshTimer);
     }
     
-    // Set up automatic refresh 1 minute before expiry (14 minutes for 15-minute tokens)
-    const refreshInterval = 14 * 60 * 1000; // 14 minutes in milliseconds
+    const currentToken = StorageService.getAccessToken();
+    if (!currentToken) {
+      return;
+    }
+
+    // Use Token Manager to get precise timing
+    const timeUntilExpiry = tokenManager.getTimeUntilExpiry(currentToken);
+    
+    if (timeUntilExpiry <= 0) {
+      // Token already expired, logout immediately
+      logout();
+      return;
+    }
+
+    // Refresh 5 minutes before expiry, or immediately if less than 5 minutes left
+    const refreshTime = Math.max(timeUntilExpiry - (5 * 60 * 1000), 1000);
+    
+    console.log(`Token refresh programado en ${Math.round(refreshTime / 1000)} segundos`);
     
     const timer = setTimeout(async () => {
       try {
+        // Double-check token hasn't expired before attempting refresh
+        const tokenToRefresh = StorageService.getAccessToken();
+        if (!tokenToRefresh || tokenManager.isTokenExpired(tokenToRefresh)) {
+          logout();
+          return;
+        }
+        
         await refreshToken();
       } catch (error) {
+        console.error('Error en refresh automático:', error);
         // If refresh fails, logout user
         logout();
       }
-    }, refreshInterval);
+    }, refreshTime);
     
     setTokenRefreshTimer(timer);
   };
@@ -117,6 +142,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const currentToken = accessToken || oldToken;
 
         if (currentToken && storedUser) {
+          // Use Token Manager to validate token before setting state
+          if (tokenManager.isTokenExpired(currentToken)) {
+            console.log('Token expirado detectado en initAuth, limpiando...');
+            clearAllTokens();
+            return;
+          }
+
           setToken(currentToken);
           setUser(JSON.parse(storedUser));
           
@@ -126,6 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (error) {
+        console.error('Error en initAuth:', error);
         // If initialization fails, clear any corrupted tokens
         clearAllTokens();
       } finally {
@@ -142,6 +175,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
   }, []);
+
+  // Monitor token expiration periodically
+  useEffect(() => {
+    if (!user || !token) {
+      return;
+    }
+
+    const monitorInterval = setInterval(() => {
+      const currentToken = StorageService.getAccessToken();
+      
+      if (!currentToken || tokenManager.isTokenExpired(currentToken)) {
+        console.log('Token expirado detectado en monitoreo, cerrando sesión...');
+        clearAllTokens();
+        router.push('/auth');
+      }
+    }, 30000); // Check every 30 seconds
+
+    return () => clearInterval(monitorInterval);
+  }, [user, token, router]);
 
   const login = async (email: string, password: string) => {
     try {

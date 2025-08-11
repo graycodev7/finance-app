@@ -88,9 +88,9 @@ export default function HistoryPage() {
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent className="glass-card border-0">
-              <SelectItem value="all">Todos los tipos</SelectItem>
-              <SelectItem value="income">Ingresos</SelectItem>
-              <SelectItem value="expense">Gastos</SelectItem>
+              <SelectItem className="compact-select-item" value="all">Todos los tipos</SelectItem>
+              <SelectItem className="compact-select-item" value="income">Ingresos</SelectItem>
+              <SelectItem className="compact-select-item" value="expense">Gastos</SelectItem>
             </SelectContent>
           </Select>
 
@@ -99,9 +99,9 @@ export default function HistoryPage() {
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent className="glass-card border-0">
-              <SelectItem value="all">Todas las categorías</SelectItem>
+              <SelectItem className="compact-select-item" value="all">Todas las categorías</SelectItem>
               {uniqueCategories.map((category) => (
-                <SelectItem key={category} value={category}>
+                <SelectItem className="compact-select-item" key={category} value={category}>
                   {category}
                 </SelectItem>
               ))}

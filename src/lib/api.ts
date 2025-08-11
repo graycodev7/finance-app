@@ -1,5 +1,6 @@
 // API Client for Backend Communication
 import { StorageService } from './storage';
+import { tokenManager } from './token-manager';
 
 const API_BASE_URL = 'https://finance-app-backend-drab.vercel.app/api';
 
@@ -70,6 +71,13 @@ class ApiClient {
     
     // Validar que el token existe y no está corrupto
     if (!token || token === 'undefined' || token === 'null' || token.length < 10) {
+      return {};
+    }
+    
+    // Verificar si el token ha expirado usando el Token Manager
+    if (tokenManager.isTokenExpired(token)) {
+      console.log('Token expirado detectado en getAuthHeaders, limpiando...');
+      StorageService.clearAuth();
       return {};
     }
     

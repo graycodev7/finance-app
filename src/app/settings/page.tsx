@@ -321,12 +321,15 @@ export default function SettingsPage() {
                       setCurrency(selectedCurrency);
                     }
                   }}>
-                    <SelectTrigger id="currency" name="currency" className="form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
+                    <SelectTrigger id="currency" name="currency" className="compact-select form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PEN">🇵🇪 Sol Peruano (S/)</SelectItem>
-                      <SelectItem value="USD">🇺🇸 Dólar Estadounidense ($)</SelectItem>
+                      {CURRENCIES.map((currency) => (
+                        <SelectItem className="compact-select-item" key={currency.code} value={currency.code}>
+                          {currency.symbol} {currency.name}
+                        </SelectItem>
+                      ))}
                       <SelectItem value="EUR">🇪🇺 Euro (€)</SelectItem>
                     </SelectContent>
                   </Select>
@@ -334,12 +337,12 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="language" className="text-slate-700 font-medium">Idioma</Label>
                   <Select value={settings.language} onValueChange={(value) => handleSettingChange("language", value)}>
-                    <SelectTrigger id="language" name="language" className="form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
+                    <SelectTrigger id="language" name="language" className="compact-select form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="es">🇪🇸 Español</SelectItem>
-                      <SelectItem value="en">🇺🇸 English</SelectItem>
+                      <SelectItem className="compact-select-item" value="es">🇪🇸 Español</SelectItem>
+                      <SelectItem className="compact-select-item" value="en">🇺🇸 English</SelectItem>
                       <SelectItem value="pt">🇧🇷 Português</SelectItem>
                     </SelectContent>
                   </Select>
