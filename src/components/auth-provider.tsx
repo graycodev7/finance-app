@@ -229,8 +229,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         throw new Error(response.message || 'Login failed');
       }
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      // Handle specific HTTP errors with user-friendly messages
+      if (error?.response?.status === 401 || error?.status === 401) {
+        throw new Error('Email o contraseña incorrectos. Por favor, verifica tus credenciales.');
+      } else if (error?.response?.status === 404 || error?.status === 404) {
+        throw new Error('Usuario no encontrado. Verifica tu email o regístrate.');
+      } else if (error?.response?.status >= 500 || error?.status >= 500) {
+        throw new Error('Error del servidor. Por favor, intenta más tarde.');
+      } else if (error?.message) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('Error de conexión. Verifica tu internet e intenta nuevamente.');
+      }
     } finally {
       setIsLoading(false);
     }

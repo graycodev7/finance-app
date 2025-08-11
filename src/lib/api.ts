@@ -221,7 +221,11 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        // Handle specific HTTP status codes silently (no console logs)
+        const errorObj = new Error(data.message || `HTTP error! status: ${response.status}`);
+        (errorObj as any).status = response.status;
+        (errorObj as any).response = { status: response.status };
+        throw errorObj;
       }
 
       return data;
@@ -231,6 +235,7 @@ class ApiClient {
         throw new Error('No se puede conectar al servidor. Verifica que el backend esté corriendo.');
       }
       
+      // Re-throw with status information preserved
       throw error;
     }
   }
