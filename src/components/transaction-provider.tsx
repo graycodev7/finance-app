@@ -42,13 +42,26 @@ function convertApiTransaction(apiTransaction: ApiTransaction): Transaction {
   const amount = Number(apiTransaction.amount);
   const validAmount = isNaN(amount) ? 0 : amount;
   
+  // Handle date conversion more robustly
+  let validDate = new Date().toISOString().split('T')[0]; // Default to today
+  if (apiTransaction.date) {
+    try {
+      const parsedDate = new Date(apiTransaction.date);
+      if (!isNaN(parsedDate.getTime())) {
+        validDate = parsedDate.toISOString().split('T')[0];
+      }
+    } catch (error) {
+      console.warn('Invalid date received from backend:', apiTransaction.date);
+    }
+  }
+  
   return {
     id: String(apiTransaction.id), // Ensure no leading zeros
     type: apiTransaction.type,
     amount: validAmount,
     description: apiTransaction.description,
-    category: apiTransaction.category,
-    date: apiTransaction.date,
+    category: apiTransaction.category || "Sin categoría",
+    date: validDate,
     createdAt: apiTransaction.created_at,
   };
 }
@@ -116,10 +129,10 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
         notes: transactionData.notes,
       });
 
-      if (response.success && response.data) {
-        // Handle direct transaction response
-        const newTransaction = convertApiTransaction(response.data);
-        setTransactions((prev) => [newTransaction, ...prev]);
+      if (response.success) {
+        // After successfully adding transaction, reload all transactions from backend
+        // This ensures we get the most up-to-date data with correct formatting
+        await refreshTransactions();
       } else {
         throw new Error(response.message || 'Failed to create transaction');
       }
