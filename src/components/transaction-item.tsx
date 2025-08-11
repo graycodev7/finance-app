@@ -58,7 +58,7 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-foreground truncate text-base">{transaction.description}</p>
           <p className="text-sm text-muted-foreground font-medium">
-            {transaction.category} • {formattedDate}
+            {transaction.category || "Sin categoría"} • {formattedDate}
           </p>
           {transaction.notes && (
             <p className="text-sm text-muted-foreground/70 italic mt-2 line-clamp-2 bg-slate-50/80 p-2 rounded-xl">

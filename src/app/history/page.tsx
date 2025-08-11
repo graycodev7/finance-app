@@ -21,16 +21,16 @@ export default function HistoryPage() {
   // Filtrar transacciones
   const filteredTransactions = transactions.filter((transaction) => {
     const matchesSearch =
-      transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.category.toLowerCase().includes(searchTerm.toLowerCase())
+      transaction.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (transaction.category?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     const matchesType = filterType === "all" || transaction.type === filterType
-    const matchesCategory = filterCategory === "all" || transaction.category === filterCategory
+    const matchesCategory = filterCategory === "all" || (transaction.category || "Sin categoría") === filterCategory
 
     return matchesSearch && matchesType && matchesCategory
   })
 
   // Obtener categorías únicas
-  const uniqueCategories = Array.from(new Set(transactions.map((t) => t.category)))
+  const uniqueCategories = Array.from(new Set(transactions.map((t) => t.category || "Sin categoría")))
 
   const handleDelete = (id: string, description: string) => {
     deleteTransaction(id)
@@ -46,7 +46,7 @@ export default function HistoryPage() {
       t.date,
       t.type === "income" ? "Ingreso" : "Gasto",
       t.description,
-      t.category,
+      t.category || "Sin categoría",
       t.amount.toString(),
       t.notes || "",
     ])

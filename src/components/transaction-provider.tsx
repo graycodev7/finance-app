@@ -241,7 +241,8 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
     expenses.forEach((expense) => {
       const amount = Number(expense.amount);
       const validAmount = isNaN(amount) ? 0 : amount;
-      categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + validAmount;
+      const category = expense.category || "Sin categoría";
+      categoryTotals[category] = (categoryTotals[category] || 0) + validAmount;
     });
 
     return categoryTotals;
