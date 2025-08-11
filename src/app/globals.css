@@ -186,6 +186,26 @@
   @apply text-slate-700;
 }
 
+/* Estilos para input numérico - flechas claras */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Alternativa: Si quieres mantener las flechas pero con estilo claro */
+input[type="number"].with-arrows::-webkit-outer-spin-button,
+input[type="number"].with-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: inner-spin-button;
+  opacity: 0.7;
+  filter: brightness(1.2) contrast(0.8);
+}
+
 .glass-card {
   @apply bg-white/80 backdrop-blur-sm border border-slate-200 rounded-lg p-6;
 }

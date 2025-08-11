@@ -70,7 +70,11 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
       const response = await apiClient.getTransactions();
 
       if (response.success && response.data) {
-        const convertedTransactions = response.data.transactions.map(convertApiTransaction);
+        // Handle both array and object with transactions property
+        const transactionsArray = Array.isArray(response.data) 
+          ? response.data 
+          : (response.data as any)?.transactions || [];
+        const convertedTransactions = transactionsArray.map(convertApiTransaction);
         setTransactions(convertedTransactions);
       } else {
         throw new Error(response.message || 'Failed to load transactions');
@@ -103,16 +107,18 @@ export function TransactionProvider({ children }: { children: React.ReactNode })
       setIsLoading(true);
       setError(null);
 
-      const response = await apiClient.createTransaction({
+      const response = await apiClient.addTransaction({
         type: transactionData.type,
         amount: transactionData.amount,
         category: transactionData.category,
         description: transactionData.description,
         date: transactionData.date,
+        notes: transactionData.notes,
       });
 
       if (response.success && response.data) {
-        const newTransaction = convertApiTransaction(response.data.transaction);
+        // Handle direct transaction response
+        const newTransaction = convertApiTransaction(response.data);
         setTransactions((prev) => [newTransaction, ...prev]);
       } else {
         throw new Error(response.message || 'Failed to create transaction');
