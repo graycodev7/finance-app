@@ -327,7 +327,7 @@ export default function SettingsPage() {
                     <SelectContent>
                       <SelectItem value="USD">🇺🇸 Dólar (USD)</SelectItem>
                       <SelectItem value="EUR">🇪🇺 Euro (€)</SelectItem>
-                      <SelectItem value="COP">🇨🇴 Peso Colombiano (COP)</SelectItem>
+                      <SelectItem value="PEN">🇵🇪 Sol Peruano (PEN)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
