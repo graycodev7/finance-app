@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from './auth-provider';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -18,6 +19,7 @@ interface LoginFormProps {
 export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
   const { login, register, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,7 +45,18 @@ export function LoginForm({ onToggleMode, showRegister }: LoginFormProps) {
         await login(formData.email, formData.password);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Authentication failed');
+      const errorMessage = err instanceof Error ? err.message : 'Authentication failed';
+      setError(errorMessage);
+      
+      // Show toast notification for better user feedback
+      if (errorMessage.includes('Email o contraseña incorrectos') || 
+          errorMessage.includes('Usuario no encontrado')) {
+        toast({
+          title: "Error de autenticación",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
     }
   };
 

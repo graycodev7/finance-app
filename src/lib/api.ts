@@ -151,6 +151,12 @@ class ApiClient {
     const fullUrl = `${API_BASE_URL}${endpoint}`;
     
     try {
+      // Suppress console errors for authentication endpoints
+      const originalConsoleError = console.error;
+      if (endpoint.includes('/auth/login') || endpoint.includes('/auth/register')) {
+        console.error = () => {}; // Temporarily suppress console.error
+      }
+      
       const response = await fetch(fullUrl, {
         ...options,
         headers: {
@@ -159,6 +165,9 @@ class ApiClient {
           ...options.headers,
         },
       });
+      
+      // Restore console.error
+      console.error = originalConsoleError;
 
       // Handle 401/403 Unauthorized - token might be expired
       if ((response.status === 401 || response.status === 403) && !endpoint.includes('/auth/')) {
