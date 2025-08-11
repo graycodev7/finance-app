@@ -107,8 +107,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Refresh 5 minutes before expiry, or immediately if less than 5 minutes left
     const refreshTime = Math.max(timeUntilExpiry - (5 * 60 * 1000), 1000);
     
-    console.log(`Token refresh programado en ${Math.round(refreshTime / 1000)} segundos`);
-    
     const timer = setTimeout(async () => {
       try {
         // Double-check token hasn't expired before attempting refresh
