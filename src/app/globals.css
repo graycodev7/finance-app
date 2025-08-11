@@ -138,9 +138,9 @@
   @apply grid gap-4;
 }
 
-/* Contenedor principal responsivo */
+/* Contenedor principal responsivo - Más ancho pero con padding */
 .responsive-container {
-  @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
+  @apply px-6 sm:px-8 lg:px-12 max-w-[1400px] mx-auto;
 }
 
 /* Cards con colores específicos */
@@ -160,6 +160,21 @@
 /* Main content con espaciado correcto */
 .main-content {
   @apply space-y-6;
+}
+
+/* Arreglos específicos para inputs y selects */
+.form-input-fixed {
+  @apply bg-white text-slate-900 border-slate-300;
+}
+
+/* Reducir espaciado en selects del historial */
+.compact-select {
+  @apply py-2 h-10;
+}
+
+/* Unificar colores de texto */
+.text-unified {
+  @apply text-slate-700;
 }
 
 .glass-card {

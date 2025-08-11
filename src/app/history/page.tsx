@@ -84,7 +84,7 @@ export default function HistoryPage() {
           </div>
 
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger id="filter-type" name="filter-type" className="modern-input border-0 bg-white/80 backdrop-blur-sm">
+            <SelectTrigger id="filter-type" name="filter-type" className="compact-select modern-input border-0 bg-white/80 backdrop-blur-sm">
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent className="glass-card border-0">
@@ -95,7 +95,7 @@ export default function HistoryPage() {
           </Select>
 
           <Select value={filterCategory} onValueChange={setFilterCategory}>
-            <SelectTrigger id="filter-category" name="filter-category" className="modern-input border-0 bg-white/80 backdrop-blur-sm">
+            <SelectTrigger id="filter-category" name="filter-category" className="compact-select modern-input border-0 bg-white/80 backdrop-blur-sm">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent className="glass-card border-0">

@@ -278,25 +278,25 @@ export default function SettingsPage() {
                 <User className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Información Personal</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Actualiza tu información personal y preferencias de cuenta</p>
+                <h3 className="text-xl font-bold text-slate-900">Información Personal</h3>
+                <p className="text-sm text-slate-600">Actualiza tu información personal y preferencias de cuenta</p>
               </div>
             </div>
             <div className="space-y-6">
               <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-slate-700 dark:text-slate-300 font-medium">Nombre completo</Label>
+                  <Label htmlFor="name" className="text-slate-700 font-medium">Nombre completo</Label>
                   <Input
                     id="name"
                     name="name"
                     autoComplete="name"
                     value={settings.name}
                     onChange={(e) => handleSettingChange("name", e.target.value)}
-                    className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm"
+                    className="form-input-fixed border-0 bg-white backdrop-blur-sm"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-slate-700 dark:text-slate-300 font-medium">Correo electrónico</Label>
+                  <Label htmlFor="email" className="text-slate-700 font-medium">Correo electrónico</Label>
                   <Input
                     id="email"
                     name="email"
@@ -304,7 +304,7 @@ export default function SettingsPage() {
                     autoComplete="email"
                     value={settings.email}
                     onChange={(e) => handleSettingChange("email", e.target.value)}
-                    className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm"
+                    className="form-input-fixed border-0 bg-white backdrop-blur-sm"
                   />
                 </div>
               </div>
@@ -313,7 +313,7 @@ export default function SettingsPage() {
 
               <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="currency" className="text-slate-700 dark:text-slate-300 font-medium">Moneda predeterminada</Label>
+                  <Label htmlFor="currency" className="text-slate-700 font-medium">Moneda predeterminada</Label>
                   <Select value={settings.currency} onValueChange={(value) => {
                     handleSettingChange("currency", value);
                     const selectedCurrency = CURRENCIES.find(c => c.code === value);
@@ -321,7 +321,7 @@ export default function SettingsPage() {
                       setCurrency(selectedCurrency);
                     }
                   }}>
-                    <SelectTrigger id="currency" name="currency" className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                    <SelectTrigger id="currency" name="currency" className="form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -332,9 +332,9 @@ export default function SettingsPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="language" className="text-slate-700 dark:text-slate-300 font-medium">Idioma</Label>
+                  <Label htmlFor="language" className="text-slate-700 font-medium">Idioma</Label>
                   <Select value={settings.language} onValueChange={(value) => handleSettingChange("language", value)}>
-                    <SelectTrigger id="language" name="language" className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                    <SelectTrigger id="language" name="language" className="form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
