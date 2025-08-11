@@ -79,29 +79,49 @@ class ApiClient {
   private async refreshAccessToken(): Promise<string> {
     const refreshToken = StorageService.getRefreshToken();
     if (!refreshToken) {
+      console.error('No refresh token available');
       throw new Error('No refresh token available');
     }
 
-    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refreshToken }),
-    });
+    try {
+      console.log('Attempting to refresh access token...');
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to refresh token');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Refresh token failed:', response.status, errorText);
+        
+        // Si el refresh token también expiró, limpia todo
+        if (response.status === 401 || response.status === 403) {
+          console.log('Refresh token expired, clearing auth data');
+          StorageService.clearAuth();
+        }
+        
+        throw new Error(`Failed to refresh token: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
+      const newAccessToken = data.data?.accessToken || data.data?.token;
+      
+      if (!newAccessToken) {
+        console.error('No access token in refresh response:', data);
+        throw new Error('No access token received from refresh endpoint');
+      }
+      
+      console.log('Successfully refreshed access token');
+      StorageService.setTokens(newAccessToken, data.data?.refreshToken || refreshToken);
+      
+      return newAccessToken;
+    } catch (error) {
+      console.error('Error during token refresh:', error);
+      throw error;
     }
-
-    const data = await response.json();
-    const newAccessToken = data.data?.accessToken || data.data?.token;
-    
-    if (newAccessToken) {
-      StorageService.setTokens(newAccessToken, data.data?.refreshToken);
-    }
-
-    return newAccessToken;
   }
 
   private processQueue(error: any, token: string | null) {
@@ -153,9 +173,13 @@ class ApiClient {
               },
             });
           } catch (refreshError) {
+            console.error('Token refresh failed completely:', refreshError);
             this.processQueue(refreshError, null);
             // Clear tokens and redirect to login
             StorageService.clearAuth();
+            
+            // Mostrar mensaje más claro al usuario
+            alert('Tu sesión ha expirado. Serás redirigido al login.');
             window.location.href = '/auth';
             throw new Error('Session expired. Please login again.');
           } finally {
