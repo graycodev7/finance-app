@@ -120,12 +120,12 @@ export default function TransactionsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="type" className="text-blue-900 font-medium">Tipo de Transacción *</Label>
                   <Select name="type" value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
-                    <SelectTrigger id="type" className="modern-input border-0 bg-white/80 backdrop-blur-sm px-3">
+                    <SelectTrigger id="type">
                       <SelectValue placeholder="Selecciona el tipo" />
                     </SelectTrigger>
-                    <SelectContent className="glass-card border-0 py-1">
-                      <SelectItem value="income" className="py-1.5 px-3">Ingreso</SelectItem>
-                      <SelectItem value="expense" className="py-1.5 px-3">Gasto</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="income">Ingreso</SelectItem>
+                      <SelectItem value="expense">Gasto</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -169,12 +169,12 @@ export default function TransactionsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="category" className="text-blue-900 font-medium">Categoría *</Label>
                   <Select name="category" value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                    <SelectTrigger id="category" className="modern-input border-0 bg-white/80 backdrop-blur-sm px-3">
+                    <SelectTrigger id="category">
                       <SelectValue placeholder="Selecciona la categoría" />
                     </SelectTrigger>
-                    <SelectContent className="glass-card border-0 py-1">
+                    <SelectContent>
                       {categories[formData.type as keyof typeof categories].map((category) => (
-                        <SelectItem key={category} value={category} className="py-1.5 px-3">
+                        <SelectItem key={category} value={category}>
                           {category}
                         </SelectItem>
                       ))}

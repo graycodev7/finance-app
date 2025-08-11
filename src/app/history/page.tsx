@@ -84,24 +84,24 @@ export default function HistoryPage() {
           </div>
 
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-[140px] bg-white/80 backdrop-blur-sm border-0 px-3">
+            <SelectTrigger>
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
-            <SelectContent className="bg-white/95 backdrop-blur-sm border-0 py-1">
-              <SelectItem value="all" className="py-1.5 px-3">Todos</SelectItem>
-              <SelectItem value="income" className="py-1.5 px-3">Ingresos</SelectItem>
-              <SelectItem value="expense" className="py-1.5 px-3">Gastos</SelectItem>
+            <SelectContent>
+              <SelectItem value="all">Todos los tipos</SelectItem>
+              <SelectItem value="income">Ingresos</SelectItem>
+              <SelectItem value="expense">Gastos</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={filterCategory} onValueChange={setFilterCategory}>
-            <SelectTrigger className="w-[160px] bg-white/80 backdrop-blur-sm border-0 px-3">
+            <SelectTrigger>
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
-            <SelectContent className="bg-white/95 backdrop-blur-sm border-0 py-1">
-              <SelectItem value="all" className="py-1.5 px-3">Todas</SelectItem>
+            <SelectContent>
+              <SelectItem value="all">Todas las categorías</SelectItem>
               {uniqueCategories.map((category) => (
-                <SelectItem key={category} value={category} className="py-1.5 px-3">
+                <SelectItem key={category} value={category}>
                   {category}
                 </SelectItem>
               ))}

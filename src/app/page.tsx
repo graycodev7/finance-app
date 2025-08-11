@@ -106,15 +106,16 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center space-x-2">
           <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
-            <SelectTrigger className="w-[180px] bg-white/80 backdrop-blur-sm border-0 px-3">
-                <SelectValue placeholder="Período" />
-              </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-sm border-0 py-1">
-                <SelectItem value="all" className="py-1.5 px-3">Todos</SelectItem>
-                <SelectItem value="week" className="py-1.5 px-3">Esta semana</SelectItem>
-                <SelectItem value="month" className="py-1.5 px-3">Este mes</SelectItem>
-                <SelectItem value="year" className="py-1.5 px-3">Este año</SelectItem>
-              </SelectContent>
+            <SelectTrigger id="period-filter" name="period-filter" className="w-full sm:w-[180px] border-0 bg-white/80 backdrop-blur-sm shadow-lg shadow-slate-200/50 rounded-2xl">
+              <SelectValue placeholder="Seleccionar período" />
+            </SelectTrigger>
+            <SelectContent className="border-0 shadow-2xl rounded-2xl bg-white/95 backdrop-blur-md">
+              <SelectItem value="7">Últimos 7 días</SelectItem>
+              <SelectItem value="30">Últimos 30 días</SelectItem>
+              <SelectItem value="90">Últimos 3 meses</SelectItem>
+              <SelectItem value="365">Último año</SelectItem>
+              <SelectItem value="all">Todo el tiempo</SelectItem>
+            </SelectContent>
           </Select>
         </div>
       </div>
