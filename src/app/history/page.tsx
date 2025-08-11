@@ -84,24 +84,24 @@ export default function HistoryPage() {
           </div>
 
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger id="filter-type" name="filter-type" className="compact-select modern-input border-0 bg-white/80 backdrop-blur-sm">
+            <SelectTrigger className="w-[140px] bg-white/80 backdrop-blur-sm border-0 px-3">
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
-            <SelectContent className="glass-card border-0">
-              <SelectItem className="compact-select-item" value="all">Todos los tipos</SelectItem>
-              <SelectItem className="compact-select-item" value="income">Ingresos</SelectItem>
-              <SelectItem className="compact-select-item" value="expense">Gastos</SelectItem>
+            <SelectContent className="bg-white/95 backdrop-blur-sm border-0">
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="income">Ingresos</SelectItem>
+              <SelectItem value="expense">Gastos</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={filterCategory} onValueChange={setFilterCategory}>
-            <SelectTrigger id="filter-category" name="filter-category" className="compact-select modern-input border-0 bg-white/80 backdrop-blur-sm">
+            <SelectTrigger className="w-[160px] bg-white/80 backdrop-blur-sm border-0 px-3">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
-            <SelectContent className="glass-card border-0">
-              <SelectItem className="compact-select-item" value="all">Todas las categorías</SelectItem>
+            <SelectContent className="bg-white/95 backdrop-blur-sm border-0">
+              <SelectItem value="all">Todas</SelectItem>
               {uniqueCategories.map((category) => (
-                <SelectItem className="compact-select-item" key={category} value={category}>
+                <SelectItem key={category} value={category}>
                   {category}
                 </SelectItem>
               ))}

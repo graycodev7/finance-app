@@ -165,13 +165,14 @@ export function ReportsSection() {
             <div className="space-y-2">
               <label htmlFor="report-period" className="text-sm font-medium">Período del reporte:</label>
               <Select value={reportPeriod} onValueChange={setReportPeriod}>
-                <SelectTrigger id="report-period" name="report-period" className="compact-select">
-                  <SelectValue />
+                <SelectTrigger className="w-[180px] bg-white/80 backdrop-blur-sm border-0 px-3">
+                  <SelectValue placeholder="Período" />
                 </SelectTrigger>
-                <SelectContent className="compact-select-content">
-                  <SelectItem className="compact-select-item" value="week">Esta semana</SelectItem>
-                  <SelectItem className="compact-select-item" value="month">Este mes</SelectItem>
-                  <SelectItem className="compact-select-item" value="year">Este año</SelectItem>
+                <SelectContent className="bg-white/95 backdrop-blur-sm border-0">
+                  <SelectItem value="week">Esta semana</SelectItem>
+                  <SelectItem value="month">Este mes</SelectItem>
+                  <SelectItem value="quarter">Este trimestre</SelectItem>
+                  <SelectItem value="year">Este año</SelectItem>
                 </SelectContent>
               </Select>
             </div>

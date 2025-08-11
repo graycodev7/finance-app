@@ -106,16 +106,15 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center space-x-2">
           <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
-            <SelectTrigger id="period-filter" name="period-filter" className="compact-select w-full sm:w-[180px] border-0 bg-white/80 backdrop-blur-sm shadow-lg shadow-slate-200/50 rounded-2xl">
-              <SelectValue placeholder="Seleccionar período" />
-            </SelectTrigger>
-            <SelectContent className="compact-select-content border-0 shadow-2xl rounded-2xl bg-white/95 backdrop-blur-md">
-              <SelectItem className="compact-select-item" value="7">Últimos 7 días</SelectItem>
-              <SelectItem className="compact-select-item" value="30">Últimos 30 días</SelectItem>
-              <SelectItem className="compact-select-item" value="90">Últimos 3 meses</SelectItem>
-              <SelectItem className="compact-select-item" value="365">Último año</SelectItem>
-              <SelectItem className="compact-select-item" value="all">Todo el tiempo</SelectItem>
-            </SelectContent>
+            <SelectTrigger className="w-[180px] bg-white/80 backdrop-blur-sm border-0 px-3">
+                <SelectValue placeholder="Período" />
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 backdrop-blur-sm border-0">
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="week">Esta semana</SelectItem>
+                <SelectItem value="month">Este mes</SelectItem>
+                <SelectItem value="year">Este año</SelectItem>
+              </SelectContent>
           </Select>
         </div>
       </div>

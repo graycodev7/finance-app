@@ -321,28 +321,37 @@ export default function SettingsPage() {
                       setCurrency(selectedCurrency);
                     }
                   }}>
-                    <SelectTrigger id="currency" name="currency" className="compact-select form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
-                      <SelectValue />
+                    <SelectTrigger id="currency" name="currency" className="text-unified px-3">
+                      <SelectValue placeholder="Selecciona tu moneda" />
                     </SelectTrigger>
                     <SelectContent>
-                      {CURRENCIES.map((currency) => (
-                        <SelectItem className="compact-select-item" key={currency.code} value={currency.code}>
-                          {currency.symbol} {currency.name}
-                        </SelectItem>
-                      ))}
-                      <SelectItem value="EUR">🇪🇺 Euro (€)</SelectItem>
+                      <SelectItem value="USD">USD - Dólar Estadounidense</SelectItem>
+                      <SelectItem value="EUR">EUR - Euro</SelectItem>
+                      <SelectItem value="GBP">GBP - Libra Esterlina</SelectItem>
+                      <SelectItem value="JPY">JPY - Yen Japonés</SelectItem>
+                      <SelectItem value="CAD">CAD - Dólar Canadiense</SelectItem>
+                      <SelectItem value="AUD">AUD - Dólar Australiano</SelectItem>
+                      <SelectItem value="CHF">CHF - Franco Suizo</SelectItem>
+                      <SelectItem value="CNY">CNY - Yuan Chino</SelectItem>
+                      <SelectItem value="MXN">MXN - Peso Mexicano</SelectItem>
+                      <SelectItem value="BRL">BRL - Real Brasileño</SelectItem>
+                      <SelectItem value="ARS">ARS - Peso Argentino</SelectItem>
+                      <SelectItem value="COP">COP - Peso Colombiano</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="language" className="text-slate-700 font-medium">Idioma</Label>
                   <Select value={settings.language} onValueChange={(value) => handleSettingChange("language", value)}>
-                    <SelectTrigger id="language" name="language" className="compact-select form-input-fixed border-0 bg-white/80 backdrop-blur-sm">
-                      <SelectValue />
+                    <SelectTrigger id="language" name="language" className="text-unified px-3">
+                      <SelectValue placeholder="Selecciona tu idioma" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem className="compact-select-item" value="es">🇪🇸 Español</SelectItem>
-                      <SelectItem className="compact-select-item" value="en">🇺🇸 English</SelectItem>
+                      <SelectItem value="es">🇪🇸 Español</SelectItem>
+                      <SelectItem value="en">🇺🇸 English</SelectItem>
+                      <SelectItem value="fr">🇫🇷 Français</SelectItem>
+                      <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
+                      <SelectItem value="it">🇮🇹 Italiano</SelectItem>
                       <SelectItem value="pt">🇧🇷 Português</SelectItem>
                     </SelectContent>
                   </Select>

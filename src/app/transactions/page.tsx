@@ -120,12 +120,12 @@ export default function TransactionsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="type" className="text-blue-900 font-medium">Tipo de Transacción *</Label>
                   <Select name="type" value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
-                    <SelectTrigger id="type" className="compact-select modern-input border-0 bg-white/80 backdrop-blur-sm">
+                    <SelectTrigger id="type" className="modern-input border-0 bg-white/80 backdrop-blur-sm px-3">
                       <SelectValue placeholder="Selecciona el tipo" />
                     </SelectTrigger>
                     <SelectContent className="glass-card border-0">
-                      <SelectItem className="compact-select-item" value="income">Ingreso</SelectItem>
-                      <SelectItem className="compact-select-item" value="expense">Gasto</SelectItem>
+                      <SelectItem value="income">Ingreso</SelectItem>
+                      <SelectItem value="expense">Gasto</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -169,12 +169,12 @@ export default function TransactionsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="category" className="text-blue-900 font-medium">Categoría *</Label>
                   <Select name="category" value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                    <SelectTrigger id="category" className="compact-select modern-input border-0 bg-white/80 backdrop-blur-sm">
-                      <SelectValue placeholder="Selecciona una categoría" />
+                    <SelectTrigger id="category" className="modern-input border-0 bg-white/80 backdrop-blur-sm px-3">
+                      <SelectValue placeholder="Selecciona la categoría" />
                     </SelectTrigger>
-                    <SelectContent className="compact-select-content glass-card border-0">
+                    <SelectContent className="glass-card border-0">
                       {categories[formData.type as keyof typeof categories].map((category) => (
-                        <SelectItem className="compact-select-item" key={category} value={category}>
+                        <SelectItem key={category} value={category}>
                           {category}
                         </SelectItem>
                       ))}
