@@ -123,9 +123,9 @@ export default function TransactionsPage() {
                     <SelectTrigger id="type" className="modern-input border-0 bg-white/80 backdrop-blur-sm px-3">
                       <SelectValue placeholder="Selecciona el tipo" />
                     </SelectTrigger>
-                    <SelectContent className="glass-card border-0">
-                      <SelectItem value="income">Ingreso</SelectItem>
-                      <SelectItem value="expense">Gasto</SelectItem>
+                    <SelectContent className="glass-card border-0 py-1">
+                      <SelectItem value="income" className="py-1.5 px-3">Ingreso</SelectItem>
+                      <SelectItem value="expense" className="py-1.5 px-3">Gasto</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -172,9 +172,9 @@ export default function TransactionsPage() {
                     <SelectTrigger id="category" className="modern-input border-0 bg-white/80 backdrop-blur-sm px-3">
                       <SelectValue placeholder="Selecciona la categoría" />
                     </SelectTrigger>
-                    <SelectContent className="glass-card border-0">
+                    <SelectContent className="glass-card border-0 py-1">
                       {categories[formData.type as keyof typeof categories].map((category) => (
-                        <SelectItem key={category} value={category}>
+                        <SelectItem key={category} value={category} className="py-1.5 px-3">
                           {category}
                         </SelectItem>
                       ))}

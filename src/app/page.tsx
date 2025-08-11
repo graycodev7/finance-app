@@ -109,11 +109,11 @@ export default function Dashboard() {
             <SelectTrigger className="w-[180px] bg-white/80 backdrop-blur-sm border-0 px-3">
                 <SelectValue placeholder="Período" />
               </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-sm border-0">
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="week">Esta semana</SelectItem>
-                <SelectItem value="month">Este mes</SelectItem>
-                <SelectItem value="year">Este año</SelectItem>
+              <SelectContent className="bg-white/95 backdrop-blur-sm border-0 py-1">
+                <SelectItem value="all" className="py-1.5 px-3">Todos</SelectItem>
+                <SelectItem value="week" className="py-1.5 px-3">Esta semana</SelectItem>
+                <SelectItem value="month" className="py-1.5 px-3">Este mes</SelectItem>
+                <SelectItem value="year" className="py-1.5 px-3">Este año</SelectItem>
               </SelectContent>
           </Select>
         </div>

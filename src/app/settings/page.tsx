@@ -324,19 +324,19 @@ export default function SettingsPage() {
                     <SelectTrigger id="currency" name="currency" className="text-unified px-3">
                       <SelectValue placeholder="Selecciona tu moneda" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD - Dólar Estadounidense</SelectItem>
-                      <SelectItem value="EUR">EUR - Euro</SelectItem>
-                      <SelectItem value="GBP">GBP - Libra Esterlina</SelectItem>
-                      <SelectItem value="JPY">JPY - Yen Japonés</SelectItem>
-                      <SelectItem value="CAD">CAD - Dólar Canadiense</SelectItem>
-                      <SelectItem value="AUD">AUD - Dólar Australiano</SelectItem>
-                      <SelectItem value="CHF">CHF - Franco Suizo</SelectItem>
-                      <SelectItem value="CNY">CNY - Yuan Chino</SelectItem>
-                      <SelectItem value="MXN">MXN - Peso Mexicano</SelectItem>
-                      <SelectItem value="BRL">BRL - Real Brasileño</SelectItem>
-                      <SelectItem value="ARS">ARS - Peso Argentino</SelectItem>
-                      <SelectItem value="COP">COP - Peso Colombiano</SelectItem>
+                    <SelectContent className="py-1">
+                      <SelectItem value="USD" className="py-1.5 px-3">USD - Dólar Estadounidense</SelectItem>
+                      <SelectItem value="EUR" className="py-1.5 px-3">EUR - Euro</SelectItem>
+                      <SelectItem value="GBP" className="py-1.5 px-3">GBP - Libra Esterlina</SelectItem>
+                      <SelectItem value="JPY" className="py-1.5 px-3">JPY - Yen Japonés</SelectItem>
+                      <SelectItem value="CAD" className="py-1.5 px-3">CAD - Dólar Canadiense</SelectItem>
+                      <SelectItem value="AUD" className="py-1.5 px-3">AUD - Dólar Australiano</SelectItem>
+                      <SelectItem value="CHF" className="py-1.5 px-3">CHF - Franco Suizo</SelectItem>
+                      <SelectItem value="CNY" className="py-1.5 px-3">CNY - Yuan Chino</SelectItem>
+                      <SelectItem value="MXN" className="py-1.5 px-3">MXN - Peso Mexicano</SelectItem>
+                      <SelectItem value="BRL" className="py-1.5 px-3">BRL - Real Brasileño</SelectItem>
+                      <SelectItem value="ARS" className="py-1.5 px-3">ARS - Peso Argentino</SelectItem>
+                      <SelectItem value="COP" className="py-1.5 px-3">COP - Peso Colombiano</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -346,13 +346,13 @@ export default function SettingsPage() {
                     <SelectTrigger id="language" name="language" className="text-unified px-3">
                       <SelectValue placeholder="Selecciona tu idioma" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="es">🇪🇸 Español</SelectItem>
-                      <SelectItem value="en">🇺🇸 English</SelectItem>
-                      <SelectItem value="fr">🇫🇷 Français</SelectItem>
-                      <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
-                      <SelectItem value="it">🇮🇹 Italiano</SelectItem>
-                      <SelectItem value="pt">🇧🇷 Português</SelectItem>
+                    <SelectContent className="py-1">
+                      <SelectItem value="es" className="py-1.5 px-3">🇪🇸 Español</SelectItem>
+                      <SelectItem value="en" className="py-1.5 px-3">🇺🇸 English</SelectItem>
+                      <SelectItem value="fr" className="py-1.5 px-3">🇫🇷 Français</SelectItem>
+                      <SelectItem value="de" className="py-1.5 px-3">🇩🇪 Deutsch</SelectItem>
+                      <SelectItem value="it" className="py-1.5 px-3">🇮🇹 Italiano</SelectItem>
+                      <SelectItem value="pt" className="py-1.5 px-3">🇧🇷 Português</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
