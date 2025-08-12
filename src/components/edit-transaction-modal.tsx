@@ -46,12 +46,25 @@ export function EditTransactionModal({ transaction, open, onOpenChange }: EditTr
   // Cargar datos de la transacción cuando se abre el modal
   useEffect(() => {
     if (transaction && open) {
+      // Formatear la fecha correctamente para el input type="date"
+      let formattedDate = "";
+      if (transaction.date) {
+        try {
+          const date = new Date(transaction.date);
+          if (!isNaN(date.getTime())) {
+            formattedDate = date.toISOString().split('T')[0];
+          }
+        } catch (error) {
+          formattedDate = new Date().toISOString().split('T')[0];
+        }
+      }
+
       setFormData({
         type: transaction.type,
         amount: transaction.amount.toString(),
         description: transaction.description,
         category: transaction.category || "",
-        date: transaction.date,
+        date: formattedDate,
         notes: transaction.notes || "",
       });
     }
@@ -74,12 +87,27 @@ export function EditTransactionModal({ transaction, open, onOpenChange }: EditTr
     setIsLoading(true);
     
     try {
+      // Asegurar que la fecha esté en el formato correcto para el backend
+      let dateToSend = formData.date;
+      if (formData.date) {
+        try {
+          // Convertir la fecha a formato ISO completo si es necesario
+          const date = new Date(formData.date);
+          if (!isNaN(date.getTime())) {
+            dateToSend = date.toISOString();
+          }
+        } catch (error) {
+          // Si hay error, usar la fecha original
+          dateToSend = formData.date;
+        }
+      }
+
       await updateTransaction(transaction.id, {
         type: formData.type,
         amount: parseFloat(formData.amount),
         description: formData.description,
         category: formData.category,
-        date: formData.date,
+        date: dateToSend,
         notes: formData.notes,
       });
       

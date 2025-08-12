@@ -8,7 +8,7 @@ import { useTransactions } from '@/components/transaction-provider'
 import { Download, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useCSVExport } from "@/hooks/use-csv-export"
-import { TransactionItem } from "@/components/transaction-item"
+import { TransactionTable } from "@/components/transaction-table"
 import { EditTransactionModal } from "@/components/edit-transaction-modal"
 
 export default function HistoryPage() {
@@ -35,7 +35,11 @@ export default function HistoryPage() {
   // Obtener categorías únicas
   const uniqueCategories = Array.from(new Set(transactions.map((t) => t.category || "Sin categoría")))
 
-  const handleDelete = (id: string, description: string) => {
+  const handleDelete = (id: string) => {
+    // Encontrar la transacción para obtener su descripción
+    const transaction = transactions.find(t => t.id === id)
+    const description = transaction?.description || "transacción"
+    
     deleteTransaction(id)
     toast({
       title: "Transacción eliminada",
@@ -138,30 +142,13 @@ export default function HistoryPage() {
               : `Mostrando ${filteredTransactions.length} de ${transactions.length} transacciones`}
           </p>
         </div>
-        <div className="space-y-2 sm:space-y-3">
-          {filteredTransactions.length > 0 ? (
-            filteredTransactions.map((transaction) => (
-              <div key={transaction.id} className="p-2 sm:p-3 bg-slate-50/80 rounded-xl sm:rounded-2xl">
-                <TransactionItem
-                  transaction={transaction}
-                  onDelete={handleDelete}
-                  onEdit={handleEdit}
-                  showDeleteButton={true}
-                  showEditButton={true}
-                />
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-slate-500 text-lg mb-2">No se encontraron transacciones</p>
-              <p className="text-sm text-slate-400">
-                {transactions.length === 0
-                  ? "¡Agrega tu primera transacción para comenzar!"
-                  : "Intenta ajustar los filtros de búsqueda"}
-              </p>
-            </div>
-          )}
-        </div>
+        <TransactionTable
+          transactions={filteredTransactions}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          showDeleteButton={true}
+          showEditButton={true}
+        />
       </div>
 
       {/* Modal de edición */}
