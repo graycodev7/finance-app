@@ -1,4 +1,4 @@
-import { ArrowDownIcon, ArrowUpIcon, Trash2 } from "lucide-react"
+import { ArrowDownIcon, ArrowUpIcon, Trash2, Edit3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Transaction } from "@/components/transaction-provider"
 import { useCurrency } from "@/components/currency-provider"
@@ -18,10 +18,18 @@ import {
 interface TransactionItemProps {
   transaction: Transaction
   onDelete?: (id: string, description: string) => void
+  onEdit?: (transaction: Transaction) => void
   showDeleteButton?: boolean
+  showEditButton?: boolean
 }
 
-export const TransactionItem = memo(function TransactionItem({ transaction, onDelete, showDeleteButton = false }: TransactionItemProps) {
+export const TransactionItem = memo(function TransactionItem({ 
+  transaction, 
+  onDelete, 
+  onEdit, 
+  showDeleteButton = false, 
+  showEditButton = false 
+}: TransactionItemProps) {
   const { formatAmount } = useCurrency();
   
   // Memoizar el callback de eliminación
@@ -30,6 +38,13 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
       onDelete(transaction.id, transaction.description)
     }
   }, [onDelete, transaction.id, transaction.description]);
+
+  // Memoizar el callback de edición
+  const handleEdit = useCallback(() => {
+    if (onEdit) {
+      onEdit(transaction)
+    }
+  }, [onEdit, transaction]);
 
   // Memoizar los estilos del icono para evitar recálculos
   const iconContainerClass = useMemo(() => 
@@ -46,8 +61,8 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
   );
 
   return (
-    <div className="group flex items-center justify-between p-4 rounded-xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 shadow-sm hover:shadow-lg border-0">
-      <div className="flex items-center space-x-3">
+    <div className="group flex items-center justify-between p-4 sm:p-3 md:p-4 rounded-xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 shadow-sm hover:shadow-lg border-0">
+      <div className="flex items-center space-x-3 flex-1 min-w-0">
         <div className={iconContainerClass}>
           {transaction.type === "income" ? (
             <ArrowUpIcon className="h-4 w-4" />
@@ -68,9 +83,9 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
         </div>
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1 sm:space-x-2 ml-2">
         <div
-          className={`font-bold text-lg px-3 py-1.5 rounded-xl ${
+          className={`font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl ${
             transaction.type === "income" 
               ? "text-emerald-700 bg-emerald-50/80" 
               : "text-rose-700 bg-rose-50/80"
@@ -79,13 +94,26 @@ export const TransactionItem = memo(function TransactionItem({ transaction, onDe
           {transaction.type === "income" ? "+" : "-"}{formatAmount(transaction.amount).replace(/^[^\d-]*/, '')}
         </div>
 
+        {/* Botón de editar - siempre visible en móvil */}
+        {showEditButton && onEdit && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleEdit}
+            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 text-muted-foreground hover:text-blue-600 hover:bg-blue-50/80 rounded-xl border-0 shadow-sm hover:shadow-lg p-2"
+          >
+            <Edit3 className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Botón de eliminar - siempre visible en móvil */}
         {showDeleteButton && onDelete && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-muted-foreground hover:text-rose-600 hover:bg-rose-50/80 rounded-xl border-0 shadow-sm hover:shadow-lg"
+                className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 text-muted-foreground hover:text-rose-600 hover:bg-rose-50/80 rounded-xl border-0 shadow-sm hover:shadow-lg p-2"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

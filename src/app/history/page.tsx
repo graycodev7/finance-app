@@ -40,6 +40,13 @@ export default function HistoryPage() {
     })
   }
 
+  const handleEdit = (transaction: any) => {
+    // TODO: Implementar modal de edición
+    console.log('Editar transacción:', transaction)
+    // Por ahora, podrías redirigir a la página de transacciones con los datos pre-cargados
+    // O abrir un modal de edición
+  }
+
   const handleExportCSV = () => {
     const csvHeaders = ["Fecha", "Tipo", "Descripción", "Categoría", "Monto", "Notas"]
     const csvData = filteredTransactions.map((t) => [
@@ -133,11 +140,13 @@ export default function HistoryPage() {
         <div className="space-y-3">
           {filteredTransactions.length > 0 ? (
             filteredTransactions.map((transaction) => (
-              <div key={transaction.id} className="p-4 bg-slate-50/80 rounded-2xl">
+              <div key={transaction.id} className="p-3 sm:p-4 bg-slate-50/80 rounded-2xl">
                 <TransactionItem
                   transaction={transaction}
                   onDelete={handleDelete}
+                  onEdit={handleEdit}
                   showDeleteButton={true}
+                  showEditButton={true}
                 />
               </div>
             ))
