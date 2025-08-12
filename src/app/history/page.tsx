@@ -9,6 +9,7 @@ import { Download, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useCSVExport } from "@/hooks/use-csv-export"
 import { TransactionItem } from "@/components/transaction-item"
+import { EditTransactionModal } from "@/components/edit-transaction-modal"
 
 export default function HistoryPage() {
   const { transactions, deleteTransaction } = useTransactions()
@@ -17,6 +18,8 @@ export default function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("all")
   const [filterCategory, setFilterCategory] = useState("all")
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null)
 
   // Filtrar transacciones
   const filteredTransactions = transactions.filter((transaction) => {
@@ -41,10 +44,8 @@ export default function HistoryPage() {
   }
 
   const handleEdit = (transaction: any) => {
-    // TODO: Implementar modal de edición
-    console.log('Editar transacción:', transaction)
-    // Por ahora, podrías redirigir a la página de transacciones con los datos pre-cargados
-    // O abrir un modal de edición
+    setSelectedTransaction(transaction)
+    setEditModalOpen(true)
   }
 
   const handleExportCSV = () => {
@@ -66,15 +67,15 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="flex-1 space-y-4 sm:space-y-5 main-content pt-16 md:pt-6 min-h-screen responsive-container">
-      <div className="flex items-center space-x-2">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+    <div className="flex-1 space-y-3 sm:space-y-4 main-content pt-16 md:pt-6 min-h-screen px-2 sm:px-4 md:px-6 max-w-7xl mx-auto">
+      <div className="flex items-center space-x-2 px-2 sm:px-0">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
           Historial de Transacciones
         </h2>
       </div>
 
       {/* Filtros y búsqueda */}
-      <div className="card-black p-3 sm:p-4 lg:p-5">
+      <div className="card-black p-3 sm:p-4 lg:p-5 mx-1 sm:mx-0">
         <div className="mb-6">
           <h3 className="text-xl font-bold text-gray-900 mb-2">Filtros y Búsqueda</h3>
           <p className="text-sm text-gray-700/70">Encuentra transacciones específicas usando los filtros</p>
@@ -126,21 +127,21 @@ export default function HistoryPage() {
       </div>
 
       {/* Lista de transacciones */}
-      <div className="glass-card p-3 sm:p-4 lg:p-5">
-        <div className="mb-6">
-          <h3 className="text-xl font-bold text-slate-900 mb-2">
+      <div className="card-black p-3 sm:p-4 lg:p-5 mx-1 sm:mx-0">
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">
             Transacciones ({filteredTransactions.length})
           </h3>
-          <p className="text-sm text-slate-600">
+          <p className="text-xs sm:text-sm text-slate-600">
             {filteredTransactions.length === transactions.length
               ? "Mostrando todas las transacciones"
               : `Mostrando ${filteredTransactions.length} de ${transactions.length} transacciones`}
           </p>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {filteredTransactions.length > 0 ? (
             filteredTransactions.map((transaction) => (
-              <div key={transaction.id} className="p-3 sm:p-4 bg-slate-50/80 rounded-2xl">
+              <div key={transaction.id} className="p-2 sm:p-3 bg-slate-50/80 rounded-xl sm:rounded-2xl">
                 <TransactionItem
                   transaction={transaction}
                   onDelete={handleDelete}
@@ -162,6 +163,13 @@ export default function HistoryPage() {
           )}
         </div>
       </div>
+
+      {/* Modal de edición */}
+      <EditTransactionModal
+        transaction={selectedTransaction}
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+      />
     </div>
   )
 }
