@@ -112,14 +112,14 @@ export class TokenManager {
 
     // Si el access token ha expirado
     if (this.isTokenExpired(accessToken)) {
-      console.log('Token de acceso expirado, limpiando datos...');
+
       this.handleExpiredToken();
       return;
     }
 
     // Si el access token necesita renovación y tenemos refresh token
     if (this.shouldRefreshToken(accessToken) && refreshToken && !this.isTokenExpired(refreshToken)) {
-      console.log('Token necesita renovación, intentando refresh...');
+
       this.attemptTokenRefresh();
     }
   }
@@ -168,7 +168,7 @@ export class TokenManager {
 
       if (newAccessToken) {
         StorageService.setTokens(newAccessToken, data.data?.refreshToken || refreshToken);
-        console.log('Token renovado exitosamente');
+
       } else {
         throw new Error('No se recibió nuevo token del servidor');
       }

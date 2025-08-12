@@ -74,7 +74,7 @@ export function useAuth() {
   }, [router]);
 
   const handleTokenExpiry = useCallback(() => {
-    console.log('Token expirado detectado, cerrando sesión...');
+
     logout();
   }, [logout]);
 

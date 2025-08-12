@@ -85,7 +85,7 @@ export function EditTransactionModal({ transaction, open, onOpenChange }: EditTr
       
       onOpenChange(false);
     } catch (error) {
-      console.error("Error updating transaction:", error);
+
       alert("Error al actualizar la transacción");
     } finally {
       setIsLoading(false);

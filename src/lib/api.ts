@@ -76,7 +76,7 @@ class ApiClient {
     
     // Verificar si el token ha expirado usando el Token Manager
     if (tokenManager.isTokenExpired(token)) {
-      console.log('Token expirado detectado en getAuthHeaders, limpiando...');
+
       StorageService.clearAuth();
       return {};
     }
@@ -92,7 +92,7 @@ class ApiClient {
     }
 
     try {
-      console.log('Attempting to refresh access token...');
+  
       const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
         method: 'POST',
         headers: {
@@ -107,7 +107,7 @@ class ApiClient {
         
         // Si el refresh token también expiró, limpia todo
         if (response.status === 401 || response.status === 403) {
-          console.log('Refresh token expired, clearing auth data');
+
           StorageService.clearAuth();
         }
         
@@ -122,7 +122,7 @@ class ApiClient {
         throw new Error('No access token received from refresh endpoint');
       }
       
-      console.log('Successfully refreshed access token');
+
       StorageService.setTokens(newAccessToken, data.data?.refreshToken || refreshToken);
       
       return newAccessToken;

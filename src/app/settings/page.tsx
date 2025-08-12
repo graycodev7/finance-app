@@ -86,7 +86,7 @@ export default function SettingsPage() {
             
             setHasLoadedInitialData(true)
           } else {
-            console.log('⚠️ API call failed, using fallback data')
+
             // Fallback a datos del contexto si falla la API
             setSettings(prev => ({
               ...prev,
@@ -96,7 +96,7 @@ export default function SettingsPage() {
             setHasLoadedInitialData(true)
           }
         } catch (error) {
-          console.log('⚠️ Error loading preferences, using fallback:', error instanceof Error ? error.message : 'Unknown error')
+
           // Fallback a datos del contexto si hay error (token expirado, etc.)
           setSettings(prev => ({
             ...prev,
@@ -179,7 +179,7 @@ export default function SettingsPage() {
           setCurrency(newCurrency)
         }
 
-        console.log('Settings after save:', settings) // Debug log
+
       } else {
         throw new Error('Error al guardar la configuración')
       }

@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (currentToken && storedUser) {
           // Use Token Manager to validate token before setting state
           if (tokenManager.isTokenExpired(currentToken)) {
-            console.log('Token expirado detectado en initAuth, limpiando...');
+
             clearAllTokens();
             return;
           }
@@ -184,7 +184,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const currentToken = StorageService.getAccessToken();
       
       if (!currentToken || tokenManager.isTokenExpired(currentToken)) {
-        console.log('Token expirado detectado en monitoreo, cerrando sesión...');
+
         clearAllTokens();
         router.push('/auth');
       }

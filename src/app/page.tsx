@@ -339,12 +339,8 @@ export default function Dashboard() {
               <div key={transaction.id} className="p-3 sm:p-4 bg-slate-50/80 rounded-2xl">
                 <TransactionItem
                   transaction={transaction}
-                  onEdit={(transaction) => {
-                    // TODO: Implementar navegación a editar o modal
-                    console.log('Editar transacción desde dashboard:', transaction)
-                  }}
                   showDeleteButton={false}
-                  showEditButton={true}
+                  showEditButton={false}
                 />
               </div>
             ))
