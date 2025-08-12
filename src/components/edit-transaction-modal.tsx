@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Transaction, useTransactions } from "./transaction-provider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useTransactions, type Transaction } from "@/components/transaction-provider";
+import { formatDateForInput, getCurrentDateForInput } from "@/lib/date-utils";
 import { Loader2 } from "lucide-react";
 
 interface EditTransactionModalProps {
@@ -46,18 +47,8 @@ export function EditTransactionModal({ transaction, open, onOpenChange }: EditTr
   // Cargar datos de la transacción cuando se abre el modal
   useEffect(() => {
     if (transaction && open) {
-      // Formatear la fecha correctamente para el input type="date"
-      let formattedDate = "";
-      if (transaction.date) {
-        try {
-          const date = new Date(transaction.date);
-          if (!isNaN(date.getTime())) {
-            formattedDate = date.toISOString().split('T')[0];
-          }
-        } catch (error) {
-          formattedDate = new Date().toISOString().split('T')[0];
-        }
-      }
+      // Formatear la fecha usando utilidades que manejan zona horaria correctamente
+      const formattedDate = formatDateForInput(transaction.date) || getCurrentDateForInput();
 
       setFormData({
         type: transaction.type,
@@ -87,20 +78,8 @@ export function EditTransactionModal({ transaction, open, onOpenChange }: EditTr
     setIsLoading(true);
     
     try {
-      // Asegurar que la fecha esté en el formato correcto para el backend
-      let dateToSend = formData.date;
-      if (formData.date) {
-        try {
-          // Convertir la fecha a formato ISO completo si es necesario
-          const date = new Date(formData.date);
-          if (!isNaN(date.getTime())) {
-            dateToSend = date.toISOString();
-          }
-        } catch (error) {
-          // Si hay error, usar la fecha original
-          dateToSend = formData.date;
-        }
-      }
+      // Enviar la fecha en formato YYYY-MM-DD tal como está (sin conversión a UTC)
+      const dateToSend = formData.date;
 
       await updateTransaction(transaction.id, {
         type: formData.type,

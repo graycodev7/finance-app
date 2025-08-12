@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit3, Trash2 } from "lucide-react";
 import { useCurrency } from "@/components/currency-provider";
+import { formatDateForDisplay } from "@/lib/date-utils";
 
 interface Transaction {
   id: string;
@@ -35,19 +36,7 @@ export function TransactionTable({
   const { formatAmount } = useCurrency();
 
   const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        return "Fecha inválida";
-      }
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      });
-    } catch {
-      return "Fecha inválida";
-    }
+    return formatDateForDisplay(dateString);
   };
 
   const handleEdit = (transaction: Transaction) => {
